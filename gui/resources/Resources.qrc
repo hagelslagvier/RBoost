@@ -1,0 +1,25 @@
+<RCC>
+  <qresource prefix="all">
+    <file>icons/item_delete.png</file>
+    <file>icons/item_edit.png</file>
+    <file>icons/item_new.png</file>
+    <file>icons/add.svg</file>
+    <file>icons/cancel.png</file>
+    <file>icons/clear.svg</file>
+    <file>icons/dialog-question.svg</file>
+    <file>icons/fileexit.png</file>
+    <file>icons/filenew.png</file>
+    <file>icons/fileopen.png</file>
+    <file>icons/filesave.png</file>
+    <file>icons/filesaveas.png</file>
+    <file>icons/help.png</file>
+    <file>icons/hint.png</file>
+    <file>icons/info.png</file>
+    <file>icons/left.png</file>
+    <file>icons/ok.png</file>
+    <file>icons/remove.svg</file>
+    <file>icons/right.png</file>
+    <file>icons/run.png</file>
+    <file>icons/stop.png</file>
+  </qresource>
+</RCC>

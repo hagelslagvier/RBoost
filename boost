@@ -1,0 +1,13 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import sys
+from PyQt5.QtWidgets import QApplication
+from gui.dialog_boost.MainDialogBoost import Boost
+
+application = QApplication(sys.argv)
+
+boost = Boost(boostPath=sys.argv[0])
+boost.show()
+
+sys.exit(application.exec_())
