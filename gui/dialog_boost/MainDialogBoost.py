@@ -188,7 +188,8 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
     @pyqtSlot(str, str)
     def __onEditItem(self, key, value):
-        newStorage = Storage()
+        newStorage = Storage(path=self.__storage.path)
+
         oldKey = self.__dialogItemEdit.expressionToChange
 
         if key in self.__storage.keys():
