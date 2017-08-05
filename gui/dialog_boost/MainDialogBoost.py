@@ -353,8 +353,10 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
         self.__storage.clear()
         self.__storage.load(path)
-        self.setWindowTitle("Boost - {}".format(reprlib.repr(path)[1:-1]))
 
+        self.setWindowTitle("Boost - {}".format(reprlib.repr(path)[1:-1]))
+        self.listWidgetExpressions.clear()
+        self.textEditMeaning.clear()
         keys = self.__storage.keys()
         for key in keys:
             self.listWidgetExpressions.addItem(key)
