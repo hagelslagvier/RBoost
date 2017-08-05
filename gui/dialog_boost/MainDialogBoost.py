@@ -133,6 +133,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
         self.__quizDialog.hints = hint_value
         self.__quizDialog.shuffle = self.comboBoxShuffle.currentIndex()
+        self.__quizDialog.order = self.comboBoxOrder.currentIndex()
         self.__quizDialog.storage = self.__storage
         self.__quizDialog.show()
 
@@ -379,6 +380,9 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         shuffleIndex = settings.value("comboboxShuffle_currentIndex", 0, type=int)
         self.comboBoxShuffle.setCurrentIndex(shuffleIndex)
 
+        orderIndex = settings.value("comboboxOrder_currentIndex", 0, type=int)
+        self.comboBoxOrder.setCurrentIndex(orderIndex)
+
         storagePath = settings.value("storagePath", "", type=str)
 
         if not storagePath:
@@ -411,4 +415,5 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         settings = QSettings("RocketLabs", "Boost")
         settings.setValue("comboBoxHint_currentIndex", self.comboBoxHint.currentIndex())
         settings.setValue("comboboxShuffle_currentIndex", self.comboBoxShuffle.currentIndex())
+        settings.setValue("comboboxOrder_currentIndex", self.comboBoxOrder.currentIndex())
         settings.setValue("storagePath", self.__storage.path)

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>748</width>
-    <height>456</height>
+    <width>1032</width>
+    <height>481</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,7 +25,7 @@
       </property>
       <property name="maximumSize">
        <size>
-        <width>250</width>
+        <width>400</width>
         <height>16777215</height>
        </size>
       </property>
@@ -205,10 +205,7 @@
      </widget>
     </item>
     <item row="0" column="1" rowspan="2">
-     <layout class="QVBoxLayout" name="verticalLayout_4">
-      <property name="sizeConstraint">
-       <enum>QLayout::SetMaximumSize</enum>
-      </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
        <widget class="QLabel" name="labelMeaning">
         <property name="font">
@@ -224,12 +221,6 @@
       </item>
       <item>
        <widget class="QTextEdit" name="textEditMeaning">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -239,7 +230,7 @@
         <property name="maximumSize">
          <size>
           <width>16777215</width>
-          <height>100</height>
+          <height>120</height>
          </size>
         </property>
         <property name="readOnly">
@@ -296,9 +287,9 @@
          </layout>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
+         <layout class="QVBoxLayout" name="verticalLayout_4">
           <item>
-           <widget class="QLabel" name="labelDirection">
+           <widget class="QLabel" name="labelShuffle">
             <property name="font">
              <font>
               <weight>75</weight>
@@ -331,6 +322,42 @@
           </item>
          </layout>
         </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <widget class="QLabel" name="labelOrder">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Порядок:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="comboBoxOrder">
+            <item>
+             <property name="text">
+              <string>С начала</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>С конца</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Случайный</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </item>
        </layout>
       </item>
       <item>
@@ -351,14 +378,14 @@
     <item row="1" column="0">
      <widget class="QListWidget" name="listWidgetExpressions">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
       <property name="maximumSize">
        <size>
-        <width>250</width>
+        <width>400</width>
         <height>16777215</height>
        </size>
       </property>
@@ -371,7 +398,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>748</width>
+     <width>1032</width>
      <height>25</height>
     </rect>
    </property>

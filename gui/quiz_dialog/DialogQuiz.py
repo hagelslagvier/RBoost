@@ -1,3 +1,4 @@
+from random import randint
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QEvent, QTimer
 from PyQt5.QtGui import QFocusEvent, QTextCursor
 from PyQt5.QtWidgets import QDialog
@@ -16,13 +17,13 @@ class DialogQuiz(Ui_QuizDialog, QDialog):
 
         self.hints = 0
         self.shuffle = 0
+        self.order = 0
         self.storage = None
         self.index = 0
 
         self.timer = QTimer()
         self.timer.setSingleShot(True)
         self.timer.setInterval(200)
-
 
         self.__customize()
 
@@ -57,10 +58,19 @@ class DialogQuiz(Ui_QuizDialog, QDialog):
 
     def showEvent(self, showEvent):
         self.onDialogShown.emit()  # mask MainWindow
+
+        if 0 == self.order:
+            self.index = 0
+        elif 1 == self.order:
+            self.index = len(self.storage)-1
+        else:
+            self.index = randint(0, len(self.storage))
+
         self.pick()
 
     def hideEvent(self, hideEvent):
         self.onDialogHidden.emit()
+        self.storage.dump()
 
     @pyqtSlot()
     def __onAlphabetButtonClicked(self):
@@ -144,14 +154,23 @@ class DialogQuiz(Ui_QuizDialog, QDialog):
                 self.makeMeaningQuiz()
 
     def next(self):
-        self.index += 1
-        if self.index >= len(self.storage.keys()):
-            self.index = 0
+        count = len(self.storage)
+
+        if 0 == self.order:
+            self.index += 1
+            if self.index >= count:
+                self.index = 0
+
+        elif 1 == self.order:
+            self.index -= 1
+            if self.index < 0:
+                self.index = len(self.storage)-1
+        else:
+            self.index = randint(0, count-1)
 
     def flashGreen(self):
         self.__setColor((139, 252, 113))
         self.timer.start()
-
 
     def flashRed(self):
         self.__setColor((252, 113, 113))
@@ -160,10 +179,6 @@ class DialogQuiz(Ui_QuizDialog, QDialog):
     def __setColor(self, color):
         for textEdit in [self.textEditExpression, self.textEditMeaning]:
             textEdit.setStyleSheet("background-color: rgb({}, {}, {});".format(*color))
-
-
-
-
 
 
 if "__main__" == __name__:
