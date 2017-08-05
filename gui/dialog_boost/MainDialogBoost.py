@@ -32,29 +32,23 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         self.__boostPath = boostPath
         self.__storage = Storage()
 
-        self.__createChildWidgets()
         self.__customize()
         self.__loadSettings()
+
+    def __customize(self):
+        self.__createChildWidgets()
+        self.__createContextMenus()
+        self.__connectSignalsToSlots()
+        self.__centerOnScreen()
+
+        self.listWidgetExpressions.viewport().installEventFilter(self)
 
     def __createChildWidgets(self):
         self.__dialogItemAdd = DialogItemAdd(self)
         self.__dialogItemEdit = DialogItemEdit(self)
         self.__quizDialog = DialogQuiz(self)
 
-    def __customize(self):
-        self.__makeContextMenus()
-        self.__connectSignalsToSlots()
-        self.__centerOnScreen()
-
-        self.listWidgetExpressions.viewport().installEventFilter(self)
-
-    def __centerOnScreen(self):
-        resolution = QDesktopWidget().screenGeometry()
-        x = (resolution.width() / 2) - (self.frameSize().width() / 2)
-        y = (resolution.height() / 2) - (self.frameSize().height() / 2)
-        self.move(x, y)
-
-    def __makeContextMenus(self):
+    def __createContextMenus(self):
         self.listWidgetExpressions.setContextMenuPolicy(Qt.CustomContextMenu)
         # self.listWidgetExpressions.setContextMenuPolicy(Qt.ActionsContextMenu) ???
         self.listWidgetExpressions.customContextMenuRequested.connect(self.__onListWidgetExpressionsContextMenuRequested)
@@ -102,6 +96,12 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
         self.actionStart.triggered.connect(self.__onStartActionTriggered)
         self.actionExit.triggered.connect(self.__onActionExitTriggered)
+
+    def __centerOnScreen(self):
+        resolution = QDesktopWidget().screenGeometry()
+        x = (resolution.width() / 2) - (self.frameSize().width() / 2)
+        y = (resolution.height() / 2) - (self.frameSize().height() / 2)
+        self.move(x, y)
 
     def __mask(self):
         hint_index = self.comboBoxHint.currentIndex()
@@ -185,23 +185,18 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         self.setWindowTitle("Boost - {}*".format(reprlib.repr(self.__storage.path)[1:-1]))
         self.__storage[key] = value
 
-
     @pyqtSlot(str, str)
     def __onEditItem(self, key, value):
         newStorage = Storage(path=self.__storage.path)
-
         oldKey = self.__dialogItemEdit.expressionToChange
 
         if key in self.__storage.keys():
-
             for k, v in self.__storage.items():
                 if k == key:
                     newStorage[k] = value
                 else:
                     newStorage[k] = self.__storage[k]
-
         else:
-
             for k, v in self.__storage.items():
                 if k == oldKey:
                     newStorage[key] = value
