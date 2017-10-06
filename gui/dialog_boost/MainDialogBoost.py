@@ -39,9 +39,8 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         self.__createChildWidgets()
         self.__createContextMenus()
         self.__connectSignalsToSlots()
+        self.__installEventFilters()
         self.__centerOnScreen()
-
-        self.listWidgetExpressions.viewport().installEventFilter(self)
 
     def __createChildWidgets(self):
         self.__dialogItemAdd = DialogItemAdd(self)
@@ -97,6 +96,9 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         self.actionStart.triggered.connect(self.__onStartActionTriggered)
         self.actionExit.triggered.connect(self.__onActionExitTriggered)
 
+    def __installEventFilters(self):
+        self.listWidgetExpressions.viewport().installEventFilter(self)
+
     def __centerOnScreen(self):
         resolution = QDesktopWidget().screenGeometry()
         x = (resolution.width() / 2) - (self.frameSize().width() / 2)
@@ -123,8 +125,10 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
             self.listWidgetExpressions.addItem(expression)
 
         expression = expressions[0]
+        self.listWidgetExpressions.setCurrentRow(0)
         meaning = self.__storage[expression][0]
         self.textEditMeaning.setText(meaning)
+
 
     @pyqtSlot()
     def __onStartActionTriggered(self):
