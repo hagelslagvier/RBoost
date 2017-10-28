@@ -96,7 +96,7 @@ class DialogQuiz(Ui_QuizDialog, QDialog):
         expression = self.textEditExpression.toPlainText()
         meaning = self.textEditMeaning.toPlainText()
 
-        if compare(key, expression) >= 95 and compare(value, meaning) >= 95:
+        if compare(key, expression) >= 95 and compare(value, meaning) >= 99:
             self.flashGreen()
             self.storage.success(key)
         else:

@@ -29,8 +29,8 @@ def compare(left, right):
 
 
 if "__main__" == __name__:
-    l = "Because I'm Batman"
-    r = "because I am   Batman"
+    l = "We looked at a lot of computers before buying this one, in order to compare prices."
+    r = "We looked at a lot of computers before buying this one, in order to compare prices."
 
     print(compare(l, r))
 
