@@ -4,7 +4,8 @@ from PyQt5.QtGui import QFocusEvent, QTextCursor
 from PyQt5.QtWidgets import QDialog
 
 from gui.quiz_dialog.Ui_QuizDialog import Ui_QuizDialog
-from helpers.chance import chance, mask_text
+from helpers.chance import chance
+from helpers.text import mask_text, compare
 
 
 class DialogQuiz(Ui_QuizDialog, QDialog):
@@ -88,7 +89,7 @@ class DialogQuiz(Ui_QuizDialog, QDialog):
         expression = self.textEditExpression.toPlainText()
         meaning = self.textEditMeaning.toPlainText()
 
-        if str(key).strip().lower() == str(expression).strip().lower() and str(value).strip().lower() == str(meaning).strip().lower():
+        if compare(key, expression) >= 80 and compare(value, meaning) >= 80:
             self.flashGreen()
             self.storage.success(key)
         else:

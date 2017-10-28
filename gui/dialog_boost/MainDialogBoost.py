@@ -14,7 +14,7 @@ from gui.dialog_item_edit.DialogItemEdit import DialogItemEdit
 from gui.quiz_dialog.DialogQuiz import DialogQuiz
 
 from helpers.storage import Storage
-from helpers.chance import mask_text
+from helpers.text import mask_text
 
 
 class Boost(QMainWindow, Ui_MainWindowBoost):
