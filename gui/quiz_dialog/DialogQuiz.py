@@ -102,6 +102,7 @@ class DialogQuiz(Ui_QuizDialog, QDialog):
     def __onPushButtonHintClicked(self):
         key = list(self.storage.keys())[self.index]
         self.storage.hint(key)
+        self.flashYellow()
 
         self.next()
         self.pick()
@@ -170,6 +171,10 @@ class DialogQuiz(Ui_QuizDialog, QDialog):
 
     def flashGreen(self):
         self.__setColor((139, 252, 113))
+        self.timer.start()
+
+    def flashYellow(self):
+        self.__setColor((255, 204, 102))
         self.timer.start()
 
     def flashRed(self):
