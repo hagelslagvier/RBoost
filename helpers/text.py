@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import re
-from helpers import chance
+from helpers.random import chance
 from fuzzywuzzy import fuzz
 
 

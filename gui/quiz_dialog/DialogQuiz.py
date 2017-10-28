@@ -4,7 +4,7 @@ from PyQt5.QtGui import QFocusEvent, QTextCursor
 from PyQt5.QtWidgets import QDialog
 
 from gui.quiz_dialog.Ui_QuizDialog import Ui_QuizDialog
-from helpers.chance import chance
+from helpers.random import chance
 from helpers.text import mask_text, compare
 
 
