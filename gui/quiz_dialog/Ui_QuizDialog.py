@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'Ui_QuizDialog.ui'
 #
-# Created: Mon Jul 31 21:10:32 2017
+# Created: Sun Oct 29 01:58:35 2017
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -61,12 +61,11 @@ class Ui_QuizDialog(object):
         self.widgetAlphabet.setMaximumSize(QtCore.QSize(16777215, 62))
         self.widgetAlphabet.setObjectName("widgetAlphabet")
         self.gridLayout = QtWidgets.QGridLayout(self.widgetAlphabet)
-        self.gridLayout.setSpacing(2)
         self.gridLayout.setContentsMargins(2, 2, 2, 2)
+        self.gridLayout.setSpacing(2)
         self.gridLayout.setObjectName("gridLayout")
         self.verticalLayout_7 = QtWidgets.QVBoxLayout()
         self.verticalLayout_7.setSpacing(2)
-        self.verticalLayout_7.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_7.setObjectName("verticalLayout_7")
         self.pushButton_01 = QtWidgets.QPushButton(self.widgetAlphabet)
         self.pushButton_01.setMinimumSize(QtCore.QSize(27, 27))
@@ -155,6 +154,7 @@ class Ui_QuizDialog(object):
         spacerItem1 = QtWidgets.QSpacerItem(142, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem1)
         self.pushButtonCheck = QtWidgets.QPushButton(QuizDialog)
+        self.pushButtonCheck.setMinimumSize(QtCore.QSize(125, 0))
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(75)
@@ -166,6 +166,7 @@ class Ui_QuizDialog(object):
         self.pushButtonCheck.setObjectName("pushButtonCheck")
         self.horizontalLayout.addWidget(self.pushButtonCheck)
         self.pushButtonHint = QtWidgets.QPushButton(QuizDialog)
+        self.pushButtonHint.setMinimumSize(QtCore.QSize(125, 0))
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(75)
@@ -177,6 +178,7 @@ class Ui_QuizDialog(object):
         self.pushButtonHint.setObjectName("pushButtonHint")
         self.horizontalLayout.addWidget(self.pushButtonHint)
         self.pushButtonCancel = QtWidgets.QPushButton(QuizDialog)
+        self.pushButtonCancel.setMinimumSize(QtCore.QSize(125, 0))
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(75)

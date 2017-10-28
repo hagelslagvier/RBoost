@@ -92,6 +92,12 @@
      </item>
      <item>
       <widget class="QPushButton" name="pushButtonOk">
+       <property name="minimumSize">
+        <size>
+         <width>125</width>
+         <height>0</height>
+        </size>
+       </property>
        <property name="font">
         <font>
          <weight>75</weight>

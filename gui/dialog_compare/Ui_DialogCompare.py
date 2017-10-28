@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'Ui_DialogCompare.ui'
 #
-# Created: Sun Oct 29 00:40:55 2017
+# Created: Sun Oct 29 01:59:57 2017
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -56,6 +56,7 @@ class Ui_DialogCompare(object):
         spacerItem = QtWidgets.QSpacerItem(142, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
         self.pushButtonOk = QtWidgets.QPushButton(DialogCompare)
+        self.pushButtonOk.setMinimumSize(QtCore.QSize(125, 0))
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(75)

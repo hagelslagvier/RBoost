@@ -99,16 +99,7 @@
           </size>
          </property>
          <layout class="QGridLayout" name="gridLayout">
-          <property name="leftMargin">
-           <number>2</number>
-          </property>
-          <property name="topMargin">
-           <number>2</number>
-          </property>
-          <property name="rightMargin">
-           <number>2</number>
-          </property>
-          <property name="bottomMargin">
+          <property name="margin">
            <number>2</number>
           </property>
           <property name="spacing">
@@ -406,6 +397,12 @@
      </item>
      <item>
       <widget class="QPushButton" name="pushButtonCheck">
+       <property name="minimumSize">
+        <size>
+         <width>125</width>
+         <height>0</height>
+        </size>
+       </property>
        <property name="font">
         <font>
          <weight>75</weight>
@@ -426,6 +423,12 @@
      </item>
      <item>
       <widget class="QPushButton" name="pushButtonHint">
+       <property name="minimumSize">
+        <size>
+         <width>125</width>
+         <height>0</height>
+        </size>
+       </property>
        <property name="font">
         <font>
          <weight>75</weight>
@@ -446,6 +449,12 @@
      </item>
      <item>
       <widget class="QPushButton" name="pushButtonCancel">
+       <property name="minimumSize">
+        <size>
+         <width>125</width>
+         <height>0</height>
+        </size>
+       </property>
        <property name="font">
         <font>
          <weight>75</weight>
