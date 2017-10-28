@@ -1,9 +1,14 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 from random import randint
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QEvent, QTimer
 from PyQt5.QtGui import QFocusEvent, QTextCursor
 from PyQt5.QtWidgets import QDialog
 
+from gui.dialog_compare.DialogCompare import DialogCompare
 from gui.quiz_dialog.Ui_QuizDialog import Ui_QuizDialog
+from helpers.diff import diff_match_patch
 from helpers.random import chance
 from helpers.text import mask_text, compare
 
@@ -15,6 +20,8 @@ class DialogQuiz(Ui_QuizDialog, QDialog):
     def __init__(self, parent=None):
         QDialog.__init__(self, parent)
         self.setupUi(self)
+
+        self.__compareDialog = DialogCompare(self)
 
         self.hints = 0
         self.shuffle = 0
@@ -93,8 +100,25 @@ class DialogQuiz(Ui_QuizDialog, QDialog):
             self.flashGreen()
             self.storage.success(key)
         else:
-            self.flashRed()
+            # self.flashRed()
             self.storage.failure(key)
+
+            correct_answer = ""
+            user_answer = ""
+            if key != expression:
+                correct_answer = key
+                user_answer = expression
+
+            if value != meaning:
+                correct_answer = value
+                user_answer = meaning
+
+            self.__compareDialog.textEditCorrectAnswer.setHtml(correct_answer)
+            DMP = diff_match_patch()
+            diffs = DMP.diff_main(correct_answer, user_answer)
+            html = DMP.diff_prettyHtml(diffs)
+            self.__compareDialog.textEditUserAnswer.setHtml(html)
+            self.__compareDialog.exec()
 
         self.next()
         self.pick()

@@ -9,7 +9,7 @@ from fuzzywuzzy import fuzz
 def mask_text(text, degree):
     result = ""
     for char in text:
-        result += char if chance.chance(degree) else "_"
+        result += char if chance(degree) else "_"
 
     return result
 
@@ -25,7 +25,7 @@ def compare(left, right):
 
     left, right = strings
 
-    return fuzz.token_set_ratio(left, right)
+    return fuzz.ratio(left, right)
 
 
 if "__main__" == __name__:
