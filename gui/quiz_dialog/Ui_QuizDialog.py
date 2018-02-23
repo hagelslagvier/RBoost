@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file 'Ui_QuizDialog.ui'
 #
-# Created: Sun Oct 29 01:58:35 2017
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.10
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -147,6 +146,12 @@ class Ui_QuizDialog(object):
         self.horizontalLayout_2.addWidget(self.widgetAlphabet)
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem)
+        self.pushButtonStartStopRecording = PushButton(QuizDialog)
+        self.pushButtonStartStopRecording.setMinimumSize(QtCore.QSize(54, 54))
+        self.pushButtonStartStopRecording.setMaximumSize(QtCore.QSize(54, 54))
+        self.pushButtonStartStopRecording.setAutoDefault(False)
+        self.pushButtonStartStopRecording.setObjectName("pushButtonStartStopRecording")
+        self.horizontalLayout_2.addWidget(self.pushButtonStartStopRecording)
         self.verticalLayout_4.addLayout(self.horizontalLayout_2)
         self.gridLayout_2.addLayout(self.verticalLayout_4, 2, 0, 1, 1)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
@@ -210,8 +215,10 @@ class Ui_QuizDialog(object):
         self.pushButton_08.setText(_translate("QuizDialog", "ö"))
         self.pushButton_09.setText(_translate("QuizDialog", "Ø"))
         self.pushButton_10.setText(_translate("QuizDialog", "ø"))
+        self.pushButtonStartStopRecording.setText(_translate("QuizDialog", "0"))
         self.pushButtonCheck.setText(_translate("QuizDialog", "Проверить"))
         self.pushButtonHint.setText(_translate("QuizDialog", "Пропустить"))
         self.pushButtonCancel.setText(_translate("QuizDialog", "Закрыть"))
 
+from helpers.widgets.PushButton import PushButton
 from gui.resources import Resources

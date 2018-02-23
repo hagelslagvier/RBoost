@@ -3,7 +3,7 @@
 
 from random import randint
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QEvent, QTimer
-from PyQt5.QtGui import QFocusEvent, QTextCursor
+from PyQt5.QtGui import QFocusEvent, QMouseEvent, QTextCursor
 from PyQt5.QtWidgets import QDialog
 
 from gui.dialog_compare.DialogCompare import DialogCompare
@@ -52,6 +52,9 @@ class DialogQuiz(Ui_QuizDialog, QDialog):
         self.pushButtonCancel.clicked.connect(self.__onPushButtonCancelClicked)
 
         self.timer.timeout.connect(self.__onTimeout)
+
+        self.pushButtonStartStopRecording.onMousePressed.connect(self.__onPushButtonStartStopRecordingMousePressed)
+        self.pushButtonStartStopRecording.onMouseReleased.connect(self.__onPushButtonStartStopRecordingMouseReleased)
 
     def eventFilter(self, receiver, event):
         if QFocusEvent == type(event) and event.gotFocus():
@@ -139,6 +142,14 @@ class DialogQuiz(Ui_QuizDialog, QDialog):
     @pyqtSlot()
     def __onTimeout(self):
         self.__setColor((255, 255, 255))
+
+    @pyqtSlot()
+    def __onPushButtonStartStopRecordingMousePressed(self):
+        print("Mouse pressed")
+
+    @pyqtSlot()
+    def __onPushButtonStartStopRecordingMouseReleased(self):
+        print("Mouse released")
 
     def makeExpressionQuiz(self):
         keys = list(self.storage.keys())

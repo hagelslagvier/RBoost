@@ -1,0 +1,6 @@
+.idea/
+dictionaries
+__pycache__
+
+*.pyc
+~*

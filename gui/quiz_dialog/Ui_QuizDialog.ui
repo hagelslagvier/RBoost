@@ -376,6 +376,28 @@
          </property>
         </spacer>
        </item>
+       <item>
+        <widget class="PushButton" name="pushButtonStartStopRecording">
+         <property name="minimumSize">
+          <size>
+           <width>54</width>
+           <height>54</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>54</width>
+           <height>54</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>0</string>
+         </property>
+         <property name="autoDefault">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
     </layout>
@@ -477,6 +499,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PushButton</class>
+   <extends>QPushButton</extends>
+   <header>helpers.widgets.PushButton</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../resources/Resources.qrc"/>
  </resources>
