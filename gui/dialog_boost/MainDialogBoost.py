@@ -284,6 +284,9 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         path, _ = QFileDialog.getSaveFileName(self, "Сохранить как...", "", "*.boost")
 
         if path:
+            if not str(path).endswith(".boost"):
+                path += ".boost"
+
             self.__storage.dump(path)
             self.__saveSettings()
 
