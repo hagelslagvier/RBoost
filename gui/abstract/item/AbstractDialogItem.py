@@ -21,8 +21,8 @@ class AbstractDialogItem(QDialog, Ui_AbstractDialogItem):
         self.__customize()
 
     def __customize(self):
-        buttons = [self.pushButton_01, self.pushButton_02, self.pushButton_03, self.pushButton_04, self.pushButton_05,
-                   self.pushButton_06, self.pushButton_07, self.pushButton_08, self.pushButton_09, self.pushButton_10]
+        buttons = [self.pushButton_01, self.pushButton_02, self.pushButton_03, self.pushButton_04, self.pushButton_05, self.pushButton_06,
+                   self.pushButton_07, self.pushButton_08, self.pushButton_09, self.pushButton_10, self.pushButton_11, self.pushButton_12]
 
         for button in buttons:
             button.clicked.connect(self.__onAlphabetButtonClicked)

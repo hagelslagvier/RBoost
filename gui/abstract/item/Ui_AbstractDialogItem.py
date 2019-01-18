@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file 'Ui_AbstractDialogItem.ui'
 #
-# Created: Fri Jul 21 21:52:40 2017
-#      by: PyQt5 UI code generator 5.2.1
+# Created by: PyQt5 UI code generator 5.10.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_AbstractDialogItem(object):
     def setupUi(self, AbstractDialogItem):
         AbstractDialogItem.setObjectName("AbstractDialogItem")
-        AbstractDialogItem.resize(455, 378)
+        AbstractDialogItem.resize(719, 451)
         self.gridLayout_2 = QtWidgets.QGridLayout(AbstractDialogItem)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.verticalLayout = QtWidgets.QVBoxLayout()
@@ -44,7 +43,6 @@ class Ui_AbstractDialogItem(object):
         self.verticalLayout_2.addWidget(self.textEditMeaning)
         self.gridLayout_2.addLayout(self.verticalLayout_2, 1, 0, 1, 1)
         self.verticalLayout_4 = QtWidgets.QVBoxLayout()
-        self.verticalLayout_4.setSpacing(2)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.labelAlphaber = QtWidgets.QLabel(AbstractDialogItem)
         font = QtGui.QFont()
@@ -144,6 +142,22 @@ class Ui_AbstractDialogItem(object):
         self.pushButton_10.setObjectName("pushButton_10")
         self.verticalLayout_5.addWidget(self.pushButton_10)
         self.gridLayout.addLayout(self.verticalLayout_5, 0, 4, 1, 1)
+        self.verticalLayout_10 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_10.setSpacing(2)
+        self.verticalLayout_10.setObjectName("verticalLayout_10")
+        self.pushButton_11 = QtWidgets.QPushButton(self.widgetAlphabet)
+        self.pushButton_11.setMinimumSize(QtCore.QSize(27, 27))
+        self.pushButton_11.setMaximumSize(QtCore.QSize(27, 27))
+        self.pushButton_11.setAutoDefault(False)
+        self.pushButton_11.setObjectName("pushButton_11")
+        self.verticalLayout_10.addWidget(self.pushButton_11)
+        self.pushButton_12 = QtWidgets.QPushButton(self.widgetAlphabet)
+        self.pushButton_12.setMinimumSize(QtCore.QSize(27, 27))
+        self.pushButton_12.setMaximumSize(QtCore.QSize(27, 27))
+        self.pushButton_12.setAutoDefault(False)
+        self.pushButton_12.setObjectName("pushButton_12")
+        self.verticalLayout_10.addWidget(self.pushButton_12)
+        self.gridLayout.addLayout(self.verticalLayout_10, 0, 5, 1, 1)
         self.horizontalLayout_2.addWidget(self.widgetAlphabet)
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem)
@@ -195,6 +209,8 @@ class Ui_AbstractDialogItem(object):
         self.pushButton_08.setText(_translate("AbstractDialogItem", "ö"))
         self.pushButton_09.setText(_translate("AbstractDialogItem", "Ø"))
         self.pushButton_10.setText(_translate("AbstractDialogItem", "ø"))
+        self.pushButton_11.setText(_translate("AbstractDialogItem", "É"))
+        self.pushButton_12.setText(_translate("AbstractDialogItem", "é"))
         self.pushButtonCancel.setText(_translate("AbstractDialogItem", "Отменить"))
 
 from gui.resources import Resources
