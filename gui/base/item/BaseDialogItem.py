@@ -1,14 +1,11 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-
 from PyQt5.QtCore import pyqtSignal, pyqtSlot
 from PyQt5.QtGui import QTextCursor, QFocusEvent
 from PyQt5.QtWidgets import QDialog
 
-from gui.abstract.item.Ui_AbstractDialogItem import Ui_AbstractDialogItem
+from gui.base.item.Ui_AbstractDialogItem import Ui_AbstractDialogItem
 
 
-class AbstractDialogItem(QDialog, Ui_AbstractDialogItem):
+class BaseDialogItem(QDialog, Ui_AbstractDialogItem):
     emitItem = pyqtSignal(str, str)
 
     def __init__(self, parent=None):
@@ -21,8 +18,20 @@ class AbstractDialogItem(QDialog, Ui_AbstractDialogItem):
         self.__customize()
 
     def __customize(self):
-        buttons = [self.pushButton_01, self.pushButton_02, self.pushButton_03, self.pushButton_04, self.pushButton_05, self.pushButton_06,
-                   self.pushButton_07, self.pushButton_08, self.pushButton_09, self.pushButton_10, self.pushButton_11, self.pushButton_12]
+        buttons = [
+            self.pushButton_01,
+            self.pushButton_02,
+            self.pushButton_03,
+            self.pushButton_04,
+            self.pushButton_05,
+            self.pushButton_06,
+            self.pushButton_07,
+            self.pushButton_08,
+            self.pushButton_09,
+            self.pushButton_10,
+            self.pushButton_11,
+            self.pushButton_12
+        ]
 
         for button in buttons:
             button.clicked.connect(self.__onAlphabetButtonClicked)
@@ -74,13 +83,14 @@ class AbstractDialogItem(QDialog, Ui_AbstractDialogItem):
         self.textEditMeaning.clear()
         self.hide()
 
+
 if "__main__" == __name__:
     import sys
     from PyQt5.QtWidgets import QApplication
 
     application = QApplication(sys.argv)
 
-    dialog = AbstractDialogItem()
+    dialog = BaseDialogItem()
     dialog.show()
 
     sys.exit(application.exec_())
