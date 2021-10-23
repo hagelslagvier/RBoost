@@ -1,12 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from gui.abstract.item.AbstractDialogItem import AbstractDialogItem
+from gui.base.item.BaseDialogItem import BaseDialogItem
 
 
-class DialogItemEdit(AbstractDialogItem):
+class DialogItemEdit(BaseDialogItem):
     def __init__(self, parent=None):
-        AbstractDialogItem.__init__(self, parent)
+        BaseDialogItem.__init__(self, parent)
         self.expressionToChange = None
 
         self.__customize()
@@ -17,7 +17,7 @@ class DialogItemEdit(AbstractDialogItem):
 
     def setExpression(self, text):
         self.expressionToChange = text
-        AbstractDialogItem.setExpression(self, text)
+        BaseDialogItem.setExpression(self, text)
 
     def hideEvent(self, event):
         self.textEditExpression.clear()

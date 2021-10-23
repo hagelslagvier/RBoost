@@ -1,12 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from gui.abstract.item.AbstractDialogItem import AbstractDialogItem
+from gui.base.item.BaseDialogItem import BaseDialogItem
 
 
-class DialogItemAdd(AbstractDialogItem):
+class DialogItemAdd(BaseDialogItem):
     def __init__(self, parent=None):
-        AbstractDialogItem.__init__(self, parent)
+        BaseDialogItem.__init__(self, parent)
 
         self.__customize()
 
