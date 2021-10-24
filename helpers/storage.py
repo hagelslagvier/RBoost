@@ -1,6 +1,3 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-
 from collections import OrderedDict
 from time import gmtime, strftime
 from json import loads, dumps
@@ -13,13 +10,13 @@ class Storage(OrderedDict):
         self.is_dirty = False
 
     def __setitem__(self, key, value, *args, **kwargs):
-       if isinstance(value, str):
-           today = strftime("%Y-%m-%d", gmtime())
-           result = {"success": 0, "failure": 0, "hint": 0}
-           value = [value, {today: result}]
+        if isinstance(value, str):
+            today = strftime("%Y-%m-%d", gmtime())
+            result = {"success": 0, "failure": 0, "hint": 0}
+            value = [value, {today: result}]
 
-       OrderedDict.__setitem__(self, key, value, *args, **kwargs)
-       self.is_dirty = True
+        OrderedDict.__setitem__(self, key, value, *args, **kwargs)
+        self.is_dirty = True
 
     def __delitem__(self, key):
         OrderedDict.__delitem__(self, key)
@@ -58,15 +55,9 @@ class Storage(OrderedDict):
         self.is_dirty = False
 
     def dump(self, path=None):
-        if self.path is None:
-            if path:
-                self.path = path
-            else:
-                today = strftime("%Y-%m-%d_%H:%M:%S", gmtime())
-                self.path = "Untitled_" + today
-        else:
-            if path:
-                self.path = path
+        today = strftime("%Y-%m-%d_%H:%M:%S", gmtime())
+
+        self.path = path or self.path or f"Untitled_{today}.boost"
 
         with open(self.path, "w") as file:
            text = dumps(self, sort_keys=False, indent=4, separators=(',', ': '), ensure_ascii=False)
