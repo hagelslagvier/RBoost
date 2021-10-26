@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QPushButton
 
 class PushButton(QPushButton):
     """
-    Custom button that emit mousePressed and mouseReleased events.
+    Custom button that emits mousePressed and mouseReleased events.
     """
     onMousePressed = pyqtSignal()
     onMouseReleased = pyqtSignal()
