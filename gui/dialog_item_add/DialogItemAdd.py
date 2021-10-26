@@ -12,7 +12,7 @@ class DialogItemAdd(BaseDialogItem):
         self.pushButtonOk.setText("Добавить")
 
 
-if "__main__" == __name__:
+if __name__ == "__main__":
     import sys
     from PyQt5.QtWidgets import QApplication
 

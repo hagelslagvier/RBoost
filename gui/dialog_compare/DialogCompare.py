@@ -29,7 +29,7 @@ class DialogCompare(Ui_DialogCompare, QDialog):
         self.close()
 
 
-if "__main__" == __name__:
+if __name__ == "__main__":
     import sys
     from PyQt5.QtWidgets import QApplication
 
