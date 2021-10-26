@@ -269,6 +269,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
             if messageBox.clickedButton() == okButton:
                 self.__saveStorage()
 
+        self.__storage.clear()
         self.listWidgetExpressions.clear()
         self.textEditMeaning.clear()
         self.setWindowTitle("Boost")
@@ -356,7 +357,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
             return
 
         self.__storage.clear()
-        self.__storage.load(path)
+        self.__storage.load(path=path)
 
         self.setWindowTitle("Boost - {}".format(reprlib.repr(path)[1:-1]))
         self.listWidgetExpressions.clear()
