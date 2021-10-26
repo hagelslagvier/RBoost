@@ -18,7 +18,7 @@ class DialogCompare(Ui_DialogCompare, QDialog):
         self.pushButtonOk.clicked.connect(self.onPushButtonOkClicked)
 
     def eventFilter(self, receiver, event):
-        if QEvent.KeyPress == event.type() and event.key() == Qt.Key_Return:
+        if event.type() == QEvent.KeyPress and event.key() == Qt.Key_Return:
             self.pushButtonOk.click()
 
             return True
