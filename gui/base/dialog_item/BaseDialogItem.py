@@ -24,7 +24,7 @@ class BaseDialogItem(QDialog, Ui_BaseDialogItem):
 
         for widget in self.widgetAlphabet.children():
             if isinstance(widget, QPushButton):
-                widget.clicked.connect(self.__onAlphabetButtonClicked)
+                widget.clicked.connect(self.__onPushButtonMagicLetterClicked)
 
     def setExpression(self, text):
         self.textEditExpression.setText(text)
@@ -39,7 +39,7 @@ class BaseDialogItem(QDialog, Ui_BaseDialogItem):
         return False
 
     @pyqtSlot()
-    def __onAlphabetButtonClicked(self):
+    def __onPushButtonMagicLetterClicked(self):
         letter = self.sender().text()
 
         cursor = self.__activeInputWidget.textCursor()
