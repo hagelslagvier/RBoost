@@ -1,12 +1,12 @@
 import re
-from helpers.events import chance
 from fuzzywuzzy import fuzz
+from helpers.events import event
 
 
 def mask_text(text, degree):
     result = ""
     for char in text:
-        result += char if chance(degree) else "_"
+        result += char if event(probability=degree) else "_"
 
     return result
 
