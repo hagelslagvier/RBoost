@@ -1,5 +1,5 @@
 import re
-from helpers.random import chance
+from helpers.events import chance
 from fuzzywuzzy import fuzz
 
 

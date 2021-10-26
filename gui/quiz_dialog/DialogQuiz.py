@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QDialog
 from gui.dialog_compare.DialogCompare import DialogCompare
 from gui.quiz_dialog.Ui_DialogQuiz import Ui_DialogQuiz
 from helpers.diff import diff_match_patch
-from helpers.random import chance
+from helpers.events import chance
 from helpers.text import mask_text, compare
 
 
