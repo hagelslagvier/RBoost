@@ -96,10 +96,10 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
 
         if compare(key, expression) >= 95 and compare(value, meaning) >= 99:
             self.flashGreen()
-            self.storage.success(key)
+            self.storage.commit_success(key)
         else:
             # self.flashRed()
-            self.storage.failure(key)
+            self.storage.commit_failure(key)
 
             correct_answer = ""
             user_answer = ""
@@ -124,7 +124,7 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
     @pyqtSlot()
     def __onPushButtonHintClicked(self):
         key = list(self.storage.keys())[self.index]
-        self.storage.hint(key)
+        self.storage.commit_hint(key)
         self.flashYellow()
 
         self.next()
