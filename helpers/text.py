@@ -1,6 +1,3 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-
 import re
 from helpers.random import chance
 from fuzzywuzzy import fuzz

@@ -1,6 +1,3 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-
 from gui.base.dialog_item.BaseDialogItem import BaseDialogItem
 
 
