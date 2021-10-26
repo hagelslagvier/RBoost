@@ -1,11 +1,11 @@
 from PyQt5.QtCore import pyqtSignal, pyqtSlot
 from PyQt5.QtGui import QTextCursor, QFocusEvent
-from PyQt5.QtWidgets import QDialog
+from PyQt5.QtWidgets import QDialog, QPushButton
 
-from gui.base.item.Ui_AbstractDialogItem import Ui_AbstractDialogItem
+from gui.base.item.Ui_BaseDialogItem import Ui_BaseDialogItem
 
 
-class BaseDialogItem(QDialog, Ui_AbstractDialogItem):
+class BaseDialogItem(QDialog, Ui_BaseDialogItem):
     emitItem = pyqtSignal(str, str)
 
     def __init__(self, parent=None):
@@ -18,27 +18,13 @@ class BaseDialogItem(QDialog, Ui_AbstractDialogItem):
         self.__customize()
 
     def __customize(self):
-        buttons = [
-            self.pushButton_01,
-            self.pushButton_02,
-            self.pushButton_03,
-            self.pushButton_04,
-            self.pushButton_05,
-            self.pushButton_06,
-            self.pushButton_07,
-            self.pushButton_08,
-            self.pushButton_09,
-            self.pushButton_10,
-            self.pushButton_11,
-            self.pushButton_12
-        ]
-
-        for button in buttons:
-            button.clicked.connect(self.__onAlphabetButtonClicked)
-
         self.__activeInputWidget = None
         self.textEditExpression.installEventFilter(self)
         self.textEditMeaning.installEventFilter(self)
+
+        for widget in self.widgetAlphabet.children():
+            if isinstance(widget, QPushButton):
+                widget.clicked.connect(self.__onAlphabetButtonClicked)
 
     def setExpression(self, text):
         self.textEditExpression.setText(text)
@@ -59,7 +45,6 @@ class BaseDialogItem(QDialog, Ui_AbstractDialogItem):
         cursor = self.__activeInputWidget.textCursor()
         cursor.insertText(letter)
         cursor.movePosition(QTextCursor.Right, 1)
-        # self.textEditMeaning.setTextCursor(cursor)
         self.__activeInputWidget.setFocus()
 
     @pyqtSlot()
