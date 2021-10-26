@@ -1,16 +1,16 @@
 from random import randint
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QEvent, QTimer
-from PyQt5.QtGui import QFocusEvent, QMouseEvent, QTextCursor
+from PyQt5.QtGui import QFocusEvent, QTextCursor
 from PyQt5.QtWidgets import QDialog
 
 from gui.dialog_compare.DialogCompare import DialogCompare
-from gui.quiz_dialog.Ui_QuizDialog import Ui_QuizDialog
+from gui.quiz_dialog.Ui_DialogQuiz import Ui_DialogQuiz
 from helpers.diff import diff_match_patch
 from helpers.random import chance
 from helpers.text import mask_text, compare
 
 
-class DialogQuiz(Ui_QuizDialog, QDialog):
+class DialogQuiz(Ui_DialogQuiz, QDialog):
     onDialogShown = pyqtSignal()
     onDialogHidden = pyqtSignal()
 
