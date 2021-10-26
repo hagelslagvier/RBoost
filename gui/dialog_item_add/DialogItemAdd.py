@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from gui.base.item.BaseDialogItem import BaseDialogItem
+from gui.base.dialog_item.BaseDialogItem import BaseDialogItem
 
 
 class DialogItemAdd(BaseDialogItem):

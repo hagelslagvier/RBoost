@@ -2,7 +2,7 @@ from PyQt5.QtCore import pyqtSignal, pyqtSlot
 from PyQt5.QtGui import QTextCursor, QFocusEvent
 from PyQt5.QtWidgets import QDialog, QPushButton
 
-from gui.base.item.Ui_BaseDialogItem import Ui_BaseDialogItem
+from gui.base.dialog_item.Ui_BaseDialogItem import Ui_BaseDialogItem
 
 
 class BaseDialogItem(QDialog, Ui_BaseDialogItem):
