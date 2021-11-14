@@ -42,7 +42,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
     def __createChildWidgets(self):
         self.__dialogItemAdd = DialogItemAdd(self)
         self.__dialogItemEdit = DialogItemEdit(self)
-        self.__quizDialog = DialogQuiz(self)
+        self.__dialogQuiz = DialogQuiz(self)
 
     def __createContextMenus(self):
         self.listWidgetExpressions.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -82,8 +82,8 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         self.__dialogItemAdd.emitItem.connect(self.__onAddItem)
         self.__dialogItemEdit.emitItem.connect(self.__onEditItem)
 
-        self.__quizDialog.onDialogShown.connect(self.__onQuizDialogShown)
-        self.__quizDialog.onDialogHidden.connect(self.__onQuizDialogHidden)
+        self.__dialogQuiz.onDialogShown.connect(self.__onQuizDialogShown)
+        self.__dialogQuiz.onDialogHidden.connect(self.__onQuizDialogHidden)
 
         self.actionNew.triggered.connect(self.__onActionNewTriggered)
         self.actionSave.triggered.connect(self.__onSaveActionTriggered)
@@ -132,11 +132,11 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         hint_index = self.comboBoxHint.currentIndex()
         hint_value = Boost.HINTS_index_to_value.get(hint_index, 0)
 
-        self.__quizDialog.hints = hint_value
-        self.__quizDialog.shuffle = self.comboBoxShuffle.currentIndex()
-        self.__quizDialog.order = self.comboBoxOrder.currentIndex()
-        self.__quizDialog.storage = self.__storage
-        self.__quizDialog.show()
+        self.__dialogQuiz.hints = hint_value
+        self.__dialogQuiz.shuffle = self.comboBoxShuffle.currentIndex()
+        self.__dialogQuiz.order = self.comboBoxOrder.currentIndex()
+        self.__dialogQuiz.storage = self.__storage
+        self.__dialogQuiz.show()
 
     @pyqtSlot()
     def __onActionExitTriggered(self):
