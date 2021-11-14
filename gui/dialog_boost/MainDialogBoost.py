@@ -46,7 +46,6 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
     def __createContextMenus(self):
         self.listWidgetExpressions.setContextMenuPolicy(Qt.CustomContextMenu)
-        # self.listWidgetExpressions.setContextMenuPolicy(Qt.ActionsContextMenu) ???
         self.listWidgetExpressions.customContextMenuRequested.connect(self.__onListWidgetExpressionsContextMenuRequested)
 
         self.menuExpressionsPopup = QMenu(self)
