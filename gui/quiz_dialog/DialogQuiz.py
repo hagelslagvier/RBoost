@@ -5,9 +5,9 @@ from PyQt5.QtWidgets import QDialog
 
 from gui.dialog_compare.DialogCompare import DialogCompare
 from gui.quiz_dialog.Ui_DialogQuiz import Ui_DialogQuiz
-from helpers.diff import diff_match_patch
-from helpers.events import event
-from helpers.text import mask_text, compare
+from core.diff import diff_match_patch
+from core.events import event
+from core.text import mask_text, compare
 
 
 class DialogQuiz(Ui_DialogQuiz, QDialog):

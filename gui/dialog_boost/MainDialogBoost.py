@@ -10,8 +10,8 @@ from gui.dialog_item_add.DialogItemAdd import DialogItemAdd
 from gui.dialog_item_edit.DialogItemEdit import DialogItemEdit
 from gui.quiz_dialog.DialogQuiz import DialogQuiz
 
-from helpers.storage import Storage
-from helpers.text import mask_text
+from core.storage import Storage
+from core.text import mask_text
 
 
 class Boost(QMainWindow, Ui_MainWindowBoost):
@@ -391,7 +391,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
         if not storagePath:
             boost_directory = os.path.dirname(self.__boostPath)
-            full_path = os.path.join(boost_directory, "dictionaries/hello.boost")
+            full_path = os.path.join(boost_directory, ".dictionaries/hello.boost")
 
             if not os.path.exists(full_path):
                 self.__createDefaultStorage(full_path)
@@ -408,7 +408,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
             messageBox.exec()
 
             boost_directory = os.path.dirname(self.__boostPath)
-            full_path = os.path.join(boost_directory, "dictionaries/hello.boost")
+            full_path = os.path.join(boost_directory, ".dictionaries/hello.boost")
             self.__createDefaultStorage(full_path)
             self.__loadStorage(full_path)
 

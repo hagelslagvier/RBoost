@@ -1,6 +1,6 @@
 .idea/
 venv/
-dictionaries
+.dictionaries
 __pycache__
 
 *.pyc
