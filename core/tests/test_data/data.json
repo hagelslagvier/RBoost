@@ -1,0 +1,55 @@
+{
+    "records": [
+        {
+            "created_on": "2021-11-28 21:43:24.581564",
+            "updated_on": "2021-11-28 21:43:24.581570",
+            "id": 1,
+            "expression": "foo_expression",
+            "meaning": "foo_meaning"
+        },
+        {
+            "created_on": "2021-11-28 21:43:24.582201",
+            "updated_on": "2021-11-28 21:43:24.582204",
+            "id": 2,
+            "expression": "bar_expression",
+            "meaning": "bar_meaning"
+        }
+    ],
+    "events": [
+        {
+            "created_on": "2021-11-28 21:43:24.585323",
+            "updated_on": "2021-11-28 21:43:24.585325",
+            "id": 1,
+            "event_type": "SUCCESS",
+            "record_id": 1
+        },
+        {
+            "created_on": "2021-11-28 21:43:24.586500",
+            "updated_on": "2021-11-28 21:43:24.586503",
+            "id": 2,
+            "event_type": "SUCCESS",
+            "record_id": 1
+        },
+        {
+            "created_on": "2021-11-28 21:43:24.587489",
+            "updated_on": "2021-11-28 21:43:24.587492",
+            "id": 3,
+            "event_type": "SUCCESS",
+            "record_id": 2
+        },
+        {
+            "created_on": "2021-11-28 21:43:24.588459",
+            "updated_on": "2021-11-28 21:43:24.588462",
+            "id": 4,
+            "event_type": "FAILURE",
+            "record_id": 2
+        },
+        {
+            "created_on": "2021-11-28 21:43:24.589435",
+            "updated_on": "2021-11-28 21:43:24.589437",
+            "id": 5,
+            "event_type": "HINT",
+            "record_id": 2
+        }
+    ]
+}
