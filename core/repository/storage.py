@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 from core.repository import session, engine
 from core.repository.adapter import Adapter
@@ -9,9 +9,9 @@ class Storage:
     def __init__(self, path: str):
         self.path = path
 
-        self.mediator = Adapter(engine=engine)
-        self.mediator.drop_tables()
-        self.mediator.load(path=self.path)
+        self.adapter = Adapter(engine=engine)
+        self.adapter.drop_tables()
+        self.adapter.load(path=self.path)
 
     def __getitem__(self, key: str) -> Optional[str]:
         record = session.query(Record) \
@@ -52,6 +52,13 @@ class Storage:
 
     def commit_hint_event(self, expression):
         self._commit_event(expression=expression, event_type=EventType.HINT)
+
+    def all_expressions(self) -> List[str]:
+        expressions = []
+        for expression in session.query(Record.expression).all():
+            expressions.append(expression)
+
+        return expressions
 
 
 
@@ -110,7 +117,7 @@ if __name__ == "__main__":
     #
     # shelf["zzz"] = "zzzz1"
     # shelf["yyy"] = "yyyy1"
-    shelf.mediator.dump(path=shelf.path)
+    shelf.adapter.dump(path=shelf.path)
 
 
 

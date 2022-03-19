@@ -10,7 +10,7 @@ from gui.dialog_item_add.DialogItemAdd import DialogItemAdd
 from gui.dialog_item_edit.DialogItemEdit import DialogItemEdit
 from gui.quiz_dialog.DialogQuiz import DialogQuiz
 
-from core.storage import Storage
+from core.repository.storage import Storage
 from core.text import mask_text
 
 
@@ -22,12 +22,12 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
     HINTS_index_to_value[3] = 0.9
     HINTS_index_to_value[4] = 1
 
-    def __init__(self, boostPath):
+    def __init__(self, boost_path):
         QMainWindow.__init__(self)
         self.setupUi(self)
 
-        self.__boostPath = boostPath
-        self.__storage = Storage()
+        self.__boost_path = boost_path
+        self.__storage = Storage(path=boost_path)
 
         self.__customize()
         self.__loadSettings()
@@ -106,7 +106,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         hint_value = Boost.HINTS_index_to_value.get(hint_index, 0)
 
         self.listWidgetExpressions.clear()
-        for expression in list(self.__storage.keys()):
+        for expression in self.__storage.all_expressions():
             self.listWidgetExpressions.addItem(mask_text(expression, hint_value))
 
         meaning = self.textEditMeaning.toPlainText()
@@ -116,13 +116,13 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
     def __unmask(self):
         self.listWidgetExpressions.clear()
 
-        expressions = list(self.__storage.keys())
+        expressions = self.__storage.all_expressions()
         for expression in expressions:
             self.listWidgetExpressions.addItem(expression)
 
         expression = expressions[0]
         self.listWidgetExpressions.setCurrentRow(0)
-        meaning = self.__storage[expression][0]
+        meaning = self.__storage[expression]
         self.textEditMeaning.setText(meaning)
 
 
@@ -390,7 +390,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         storagePath = settings.value("storagePath", "", type=str)
 
         if not storagePath:
-            boost_directory = os.path.dirname(self.__boostPath)
+            boost_directory = os.path.dirname(self.__boost_path)
             full_path = os.path.join(boost_directory, ".dictionaries/hello.boost")
 
             if not os.path.exists(full_path):
@@ -407,7 +407,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
             okButton.setText("Ok")
             messageBox.exec()
 
-            boost_directory = os.path.dirname(self.__boostPath)
+            boost_directory = os.path.dirname(self.__boost_path)
             full_path = os.path.join(boost_directory, ".dictionaries/hello.boost")
             self.__createDefaultStorage(full_path)
             self.__loadStorage(full_path)
