@@ -38,3 +38,12 @@ class Adapter:
 
         with open(path, "w") as file:
             json.dump(content, file, indent=4, default=str)
+
+
+if __name__ == "__main__":
+    from sqlalchemy import create_engine
+
+    engine = create_engine("sqlite://admin:admin@localhist:5432/aidkit_testbed")
+
+    adapter = Adapter(engine=engine)
+    adapter.dump(path="content.json")
