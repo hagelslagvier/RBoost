@@ -3,6 +3,7 @@ import json
 from pandas import DataFrame, read_sql_table
 from sqlalchemy import create_engine
 from sqlalchemy.engine.base import Engine
+from pathlib import Path
 
 from core.repository import DeclarativeBase
 
@@ -16,6 +17,9 @@ class Adapter:
 
     def load(self, path: str) -> None:
         DeclarativeBase.metadata.create_all(bind=self.engine)
+
+        if not Path(path).exists():
+            return
 
         with open(path, "r") as file:
             content = json.load(file)
