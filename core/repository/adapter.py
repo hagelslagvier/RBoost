@@ -2,14 +2,14 @@ import json
 
 from sqlalchemy.engine.base import Engine
 from pandas import DataFrame, read_sql_table
-
+from sqlalchemy import create_engine
 
 from core.repository import DeclarativeBase
 
 
 class Adapter:
-    def __init__(self, engine: Engine) -> None:
-        self.engine = engine
+    def __init__(self, engine: Engine = None) -> None:
+        self.engine = engine or create_engine("sqlite:///:memory:")
 
     def drop_tables(self) -> None:
         DeclarativeBase.metadata.drop_all(bind=self.engine)
@@ -17,11 +17,8 @@ class Adapter:
     def load(self, path: str) -> None:
         DeclarativeBase.metadata.create_all(bind=self.engine)
 
-        try:
-            with open(path, "r") as file:
-                content = json.load(file)
-        except FileNotFoundError:
-            return
+        with open(path, "r") as file:
+            content = json.load(file)
 
         for table, payload in content.items():
             if not payload:
@@ -36,14 +33,5 @@ class Adapter:
             if payload:
                 content.update({table: payload})
 
-        with open(path, "w") as file:
+        with open(path, "w+") as file:
             json.dump(content, file, indent=4, default=str)
-
-
-if __name__ == "__main__":
-    from sqlalchemy import create_engine
-
-    engine = create_engine("sqlite://admin:admin@localhist:5432/aidkit_testbed")
-
-    adapter = Adapter(engine=engine)
-    adapter.dump(path="content.json")
