@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Text, DateTime, Enum, ForeignKey
 
-from core.repository.types import EventType
+from core.repository.events import EventType
 
 DeclarativeBase = declarative_base()
 
