@@ -1,8 +1,8 @@
-from typing import Optional, List
+from typing import List, Optional
 
-from core.repository import session, engine
+from core.repository import engine, session
 from core.repository.adapter import Adapter
-from core.repository.models import Record, Event, EventType
+from core.repository.models import Event, EventType, Record
 
 
 class Storage:
@@ -14,9 +14,7 @@ class Storage:
         self.adapter.load(path=self.path)
 
     def __getitem__(self, key: str) -> Optional[str]:
-        record = session.query(Record) \
-            .filter(Record.expression == key) \
-            .one_or_none()
+        record = session.query(Record).filter(Record.expression == key).one_or_none()
 
         value = record.meaning if record else None
 
@@ -28,17 +26,13 @@ class Storage:
         session.commit()
 
     def __delitem__(self, key: str) -> None:
-        record = session.query(Record) \
-            .filter(Record.expression == key) \
-            .one()
+        record = session.query(Record).filter(Record.expression == key).one()
 
         session.delete(record)
         session.commit()
 
     def _commit_event(self, expression: str, event_type: EventType):
-        record = session.query(Record)\
-            .filter(Record.expression == expression)\
-            .one()
+        record = session.query(Record).filter(Record.expression == expression).one()
 
         event = Event(event_type=event_type, record=record)
         session.add(event)
@@ -59,7 +53,6 @@ class Storage:
             expressions.append(expression)
 
         return expressions
-
 
 
 if __name__ == "__main__":
@@ -83,11 +76,11 @@ if __name__ == "__main__":
     # session.commit()
     # print(record)
     #
-    shelf = Storage(path="../payload/data.json")
+    shelf = Storage(path="/core/repository/tests/fixtures/data.json")
 
     shelf["foo_expression"] = "foo_meaning"
     shelf["bar_expression"] = "bar_meaning"
-
+    shelf["baz_expression"] = "bar_meaning"
 
     shelf.commit_success_event(expression="foo_expression")
     shelf.commit_success_event(expression="foo_expression")
@@ -95,6 +88,9 @@ if __name__ == "__main__":
     shelf.commit_success_event(expression="bar_expression")
     shelf.commit_failure_event(expression="bar_expression")
     shelf.commit_hint_event(expression="bar_expression")
+
+    shelf.commit_hint_event(expression="baz_expression")
+    shelf.commit_hint_event(expression="baz_expression")
 
     # r = shelf["foo2"]
     # print(r)
@@ -118,6 +114,3 @@ if __name__ == "__main__":
     # shelf["zzz"] = "zzzz1"
     # shelf["yyy"] = "yyyy1"
     shelf.adapter.dump(path=shelf.path)
-
-
-

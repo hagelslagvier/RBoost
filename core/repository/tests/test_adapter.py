@@ -2,15 +2,16 @@ import json
 from pathlib import Path
 from unittest.mock import call, patch
 
-from core.repository import DeclarativeBase
-from core.repository.adapter import Adapter
-from core.repository.events import EventType
-from core.repository.models import Event, Record
 from pytest import raises
 from sqlalchemy import asc, create_engine
 from sqlalchemy.engine import Engine
 from sqlalchemy.engine.url import make_url
 from sqlalchemy.orm import sessionmaker
+
+from core.repository import DeclarativeBase
+from core.repository.adapter import Adapter
+from core.repository.events import EventType
+from core.repository.models import Event, Record
 
 
 def test_if_can_create_adapter():

@@ -1,8 +1,8 @@
 import json
 
-from sqlalchemy.engine.base import Engine
 from pandas import DataFrame, read_sql_table
 from sqlalchemy import create_engine
+from sqlalchemy.engine.base import Engine
 
 from core.repository import DeclarativeBase
 
@@ -24,12 +24,16 @@ class Adapter:
             if not payload:
                 continue
 
-            DataFrame(payload).to_sql(name=table, con=self.engine, index=False, if_exists="append")
+            DataFrame(payload).to_sql(
+                name=table, con=self.engine, index=False, if_exists="append"
+            )
 
     def dump(self, path: str) -> None:
         content = {}
         for table in (table.name for table in DeclarativeBase.metadata.sorted_tables):
-            payload = read_sql_table(table_name=table, con=self.engine).to_dict(orient="records")
+            payload = read_sql_table(table_name=table, con=self.engine).to_dict(
+                orient="records"
+            )
             if payload:
                 content.update({table: payload})
 

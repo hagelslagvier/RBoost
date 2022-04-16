@@ -1,8 +1,8 @@
 from datetime import datetime
 
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy import Column, DateTime, Enum, ForeignKey, Integer, String, Text
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, Text, DateTime, Enum, ForeignKey
+from sqlalchemy.orm import backref, relationship
 
 from core.repository.events import EventType
 
