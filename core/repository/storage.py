@@ -1,10 +1,9 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from typing import List, Optional
 
 from core.repository.events import EventType
-from core.repository.models import DeclarativeBase, Record, Event
-
-from typing import Optional, List
+from core.repository.models import DeclarativeBase, Event, Record
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 
 class Storage:

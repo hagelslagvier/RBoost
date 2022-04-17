@@ -1,19 +1,23 @@
-
 import wave
+
 import pyaudio
 
 
 class Recorder:
     def __init__(self, audio_settings=None, file_path=None):
 
-        self.__audio_settings = audio_settings if audio_settings else {
-            "input": True,
-            "format": pyaudio.paInt16,
-            "channels": 2,
-            "rate": 44100,
-            "frames_per_buffer": 1024,
-            "stream_callback": self.__defaultCallback()
-        }
+        self.__audio_settings = (
+            audio_settings
+            if audio_settings
+            else {
+                "input": True,
+                "format": pyaudio.paInt16,
+                "channels": 2,
+                "rate": 44100,
+                "frames_per_buffer": 1024,
+                "stream_callback": self.__defaultCallback(),
+            }
+        )
 
         file_path = file_path if file_path else "unnamed.wav"
 
@@ -28,6 +32,7 @@ class Recorder:
         def callback(in_data, frame_count, time_info, status):
             self.__file.writeframes(in_data)
             return in_data, pyaudio.paContinue
+
         return callback
 
     def __openFile(self, path):

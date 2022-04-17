@@ -9,6 +9,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_MainWindowBoost(object):
     def setupUi(self, MainWindowBoost):
         MainWindowBoost.setObjectName("MainWindowBoost")
@@ -35,7 +36,9 @@ class Ui_MainWindowBoost(object):
         self.labelExpressions.setFont(font)
         self.labelExpressions.setObjectName("labelExpressions")
         self.gridLayout.addWidget(self.labelExpressions, 0, 0, 1, 1)
-        spacerItem = QtWidgets.QSpacerItem(109, 17, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(
+            109, 17, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.gridLayout.addItem(spacerItem, 0, 1, 1, 1)
         self.pushButtonAddItem = QtWidgets.QPushButton(self.frame)
         self.pushButtonAddItem.setMinimumSize(QtCore.QSize(17, 17))
@@ -47,7 +50,11 @@ class Ui_MainWindowBoost(object):
         self.pushButtonAddItem.setFocusPolicy(QtCore.Qt.NoFocus)
         self.pushButtonAddItem.setText("")
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/all/icons/item_new.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(
+            QtGui.QPixmap(":/all/icons/item_new.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.pushButtonAddItem.setIcon(icon)
         self.pushButtonAddItem.setFlat(True)
         self.pushButtonAddItem.setObjectName("pushButtonAddItem")
@@ -58,7 +65,11 @@ class Ui_MainWindowBoost(object):
         self.pushButtonEditItem.setFocusPolicy(QtCore.Qt.NoFocus)
         self.pushButtonEditItem.setText("")
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/all/icons/item_edit.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(
+            QtGui.QPixmap(":/all/icons/item_edit.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.pushButtonEditItem.setIcon(icon1)
         self.pushButtonEditItem.setFlat(True)
         self.pushButtonEditItem.setObjectName("pushButtonEditItem")
@@ -73,12 +84,18 @@ class Ui_MainWindowBoost(object):
         self.pushButtonDeleteItem.setFocusPolicy(QtCore.Qt.NoFocus)
         self.pushButtonDeleteItem.setText("")
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(":/all/icons/item_delete.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon2.addPixmap(
+            QtGui.QPixmap(":/all/icons/item_delete.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.pushButtonDeleteItem.setIcon(icon2)
         self.pushButtonDeleteItem.setFlat(True)
         self.pushButtonDeleteItem.setObjectName("pushButtonDeleteItem")
         self.gridLayout.addWidget(self.pushButtonDeleteItem, 0, 4, 1, 1)
-        spacerItem1 = QtWidgets.QSpacerItem(17, 17, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            17, 17, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum
+        )
         self.gridLayout.addItem(spacerItem1, 0, 5, 1, 1)
         self.gridLayout_2.addWidget(self.frame, 0, 0, 1, 1)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout()
@@ -149,14 +166,20 @@ class Ui_MainWindowBoost(object):
         self.verticalLayout_3.addWidget(self.comboBoxOrder)
         self.horizontalLayout.addLayout(self.verticalLayout_3)
         self.verticalLayout_2.addLayout(self.horizontalLayout)
-        spacerItem2 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem2 = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.verticalLayout_2.addItem(spacerItem2)
         self.gridLayout_2.addLayout(self.verticalLayout_2, 0, 1, 2, 1)
         self.listWidgetExpressions = QtWidgets.QListWidget(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.listWidgetExpressions.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.listWidgetExpressions.sizePolicy().hasHeightForWidth()
+        )
         self.listWidgetExpressions.setSizePolicy(sizePolicy)
         self.listWidgetExpressions.setMaximumSize(QtCore.QSize(400, 16777215))
         self.listWidgetExpressions.setObjectName("listWidgetExpressions")
@@ -180,37 +203,61 @@ class Ui_MainWindowBoost(object):
         MainWindowBoost.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
         self.actionNew = QtWidgets.QAction(MainWindowBoost)
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(":/all/icons/filenew.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon3.addPixmap(
+            QtGui.QPixmap(":/all/icons/filenew.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.actionNew.setIcon(icon3)
         self.actionNew.setObjectName("actionNew")
         self.actionOpen = QtWidgets.QAction(MainWindowBoost)
         icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(":/all/icons/fileopen.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon4.addPixmap(
+            QtGui.QPixmap(":/all/icons/fileopen.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.actionOpen.setIcon(icon4)
         self.actionOpen.setObjectName("actionOpen")
         self.actionSave = QtWidgets.QAction(MainWindowBoost)
         icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap(":/all/icons/filesave.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon5.addPixmap(
+            QtGui.QPixmap(":/all/icons/filesave.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.actionSave.setIcon(icon5)
         self.actionSave.setObjectName("actionSave")
         self.actionSaveAs = QtWidgets.QAction(MainWindowBoost)
         icon6 = QtGui.QIcon()
-        icon6.addPixmap(QtGui.QPixmap(":/all/icons/filesaveas.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon6.addPixmap(
+            QtGui.QPixmap(":/all/icons/filesaveas.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.actionSaveAs.setIcon(icon6)
         self.actionSaveAs.setObjectName("actionSaveAs")
         self.actionExit = QtWidgets.QAction(MainWindowBoost)
         icon7 = QtGui.QIcon()
-        icon7.addPixmap(QtGui.QPixmap(":/all/icons/fileexit.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon7.addPixmap(
+            QtGui.QPixmap(":/all/icons/fileexit.png"),
+            QtGui.QIcon.Normal,
+            QtGui.QIcon.Off,
+        )
         self.actionExit.setIcon(icon7)
         self.actionExit.setObjectName("actionExit")
         self.actionStart = QtWidgets.QAction(MainWindowBoost)
         icon8 = QtGui.QIcon()
-        icon8.addPixmap(QtGui.QPixmap(":/all/icons/run.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon8.addPixmap(
+            QtGui.QPixmap(":/all/icons/run.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off
+        )
         self.actionStart.setIcon(icon8)
         self.actionStart.setObjectName("actionStart")
         self.actionAbout = QtWidgets.QAction(MainWindowBoost)
         icon9 = QtGui.QIcon()
-        icon9.addPixmap(QtGui.QPixmap(":/all/icons/info.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon9.addPixmap(
+            QtGui.QPixmap(":/all/icons/info.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off
+        )
         self.actionAbout.setIcon(icon9)
         self.actionAbout.setObjectName("actionAbout")
         self.menuFile.addAction(self.actionNew)
@@ -244,7 +291,9 @@ class Ui_MainWindowBoost(object):
         MainWindowBoost.setWindowTitle(_translate("MainWindowBoost", "Словарь"))
         self.labelExpressions.setText(_translate("MainWindowBoost", "Словарь:"))
         self.pushButtonAddItem.setToolTip(_translate("MainWindowBoost", "Добавить"))
-        self.pushButtonEditItem.setToolTip(_translate("MainWindowBoost", "Редактировать"))
+        self.pushButtonEditItem.setToolTip(
+            _translate("MainWindowBoost", "Редактировать")
+        )
         self.pushButtonDeleteItem.setToolTip(_translate("MainWindowBoost", "Удалить"))
         self.labelMeaning.setText(_translate("MainWindowBoost", "Значение:"))
         self.labelHint.setText(_translate("MainWindowBoost", "Подсказки:"))
@@ -255,7 +304,9 @@ class Ui_MainWindowBoost(object):
         self.comboBoxHint.setItemText(4, _translate("MainWindowBoost", "Полностью"))
         self.labelShuffle.setText(_translate("MainWindowBoost", "Перебор:"))
         self.comboBoxShuffle.setItemText(0, _translate("MainWindowBoost", "По слову"))
-        self.comboBoxShuffle.setItemText(1, _translate("MainWindowBoost", "По значению"))
+        self.comboBoxShuffle.setItemText(
+            1, _translate("MainWindowBoost", "По значению")
+        )
         self.comboBoxShuffle.setItemText(2, _translate("MainWindowBoost", "Смешанный"))
         self.labelOrder.setText(_translate("MainWindowBoost", "Порядок:"))
         self.comboBoxOrder.setItemText(0, _translate("MainWindowBoost", "С начала"))
@@ -277,10 +328,13 @@ class Ui_MainWindowBoost(object):
         self.actionSave.setShortcut(_translate("MainWindowBoost", "Ctrl+S"))
         self.actionSaveAs.setText(_translate("MainWindowBoost", "Сохранить как..."))
         self.actionSaveAs.setIconText(_translate("MainWindowBoost", "Сохранить как..."))
-        self.actionSaveAs.setToolTip(_translate("MainWindowBoost", "Сохранить файл как..."))
+        self.actionSaveAs.setToolTip(
+            _translate("MainWindowBoost", "Сохранить файл как...")
+        )
         self.actionExit.setText(_translate("MainWindowBoost", "Выход"))
         self.actionExit.setShortcut(_translate("MainWindowBoost", "Ctrl+Q"))
         self.actionStart.setText(_translate("MainWindowBoost", "Старт"))
         self.actionAbout.setText(_translate("MainWindowBoost", "О программе"))
+
 
 from gui.resources import Resources

@@ -1,8 +1,7 @@
-from PyQt5.QtCore import pyqtSignal, pyqtSlot
-from PyQt5.QtGui import QTextCursor, QFocusEvent
-from PyQt5.QtWidgets import QDialog, QPushButton
-
 from gui.base.dialog_item.Ui_BaseDialogItem import Ui_BaseDialogItem
+from PyQt5.QtCore import pyqtSignal, pyqtSlot
+from PyQt5.QtGui import QFocusEvent, QTextCursor
+from PyQt5.QtWidgets import QDialog, QPushButton
 
 
 class BaseDialogItem(QDialog, Ui_BaseDialogItem):
@@ -71,6 +70,7 @@ class BaseDialogItem(QDialog, Ui_BaseDialogItem):
 
 if __name__ == "__main__":
     import sys
+
     from PyQt5.QtWidgets import QApplication
 
     application = QApplication(sys.argv)

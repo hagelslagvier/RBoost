@@ -1,13 +1,13 @@
 from random import randint
-from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QEvent, QTimer
-from PyQt5.QtGui import QFocusEvent, QTextCursor
-from PyQt5.QtWidgets import QDialog
 
-from gui.dialog_compare.DialogCompare import DialogCompare
-from gui.quiz_dialog.Ui_DialogQuiz import Ui_DialogQuiz
 from core.diff import diff_match_patch
 from core.events import event
-from core.text import mask_text, compare
+from core.text import compare, mask_text
+from gui.dialog_compare.DialogCompare import DialogCompare
+from gui.quiz_dialog.Ui_DialogQuiz import Ui_DialogQuiz
+from PyQt5.QtCore import QEvent, Qt, QTimer, pyqtSignal, pyqtSlot
+from PyQt5.QtGui import QFocusEvent, QTextCursor
+from PyQt5.QtWidgets import QDialog
 
 
 class DialogQuiz(Ui_DialogQuiz, QDialog):
@@ -40,8 +40,20 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
         self.textEditMeaning.installEventFilter(self)
 
     def __connectSignalsToSlots(self):
-        alphabetButtons = [self.pushButton_01, self.pushButton_02, self.pushButton_03, self.pushButton_04, self.pushButton_05, self.pushButton_06,
-                           self.pushButton_07, self.pushButton_08, self.pushButton_09, self.pushButton_10, self.pushButton_11, self.pushButton_12]
+        alphabetButtons = [
+            self.pushButton_01,
+            self.pushButton_02,
+            self.pushButton_03,
+            self.pushButton_04,
+            self.pushButton_05,
+            self.pushButton_06,
+            self.pushButton_07,
+            self.pushButton_08,
+            self.pushButton_09,
+            self.pushButton_10,
+            self.pushButton_11,
+            self.pushButton_12,
+        ]
         for button in alphabetButtons:
             button.clicked.connect(self.__onAlphabetButtonClicked)
 
@@ -68,7 +80,7 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
         if 0 == self.order:
             self.index = 0
         elif 1 == self.order:
-            self.index = len(self.storage)-1
+            self.index = len(self.storage) - 1
         else:
             self.index = randint(0, len(self.storage))
 
@@ -196,9 +208,9 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
         elif 1 == self.order:
             self.index -= 1
             if self.index < 0:
-                self.index = len(self.storage)-1
+                self.index = len(self.storage) - 1
         else:
-            self.index = randint(0, count-1)
+            self.index = randint(0, count - 1)
 
     def flashGreen(self):
         self.__setColor((139, 252, 113))
@@ -219,6 +231,7 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
 
 if __name__ == "__main__":
     import sys
+
     from PyQt5.QtWidgets import QApplication
 
     application = QApplication(sys.argv)

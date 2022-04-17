@@ -6,6 +6,7 @@ class PushButton(QPushButton):
     """
     Custom button that emits mousePressed and mouseReleased events.
     """
+
     onMousePressed = pyqtSignal()
     onMouseReleased = pyqtSignal()
 
@@ -22,6 +23,7 @@ class PushButton(QPushButton):
 if "__main__" == __name__:
 
     import sys
+
     from PyQt5.QtWidgets import QApplication
 
     application = QApplication(sys.argv)

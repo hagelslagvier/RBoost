@@ -1,5 +1,6 @@
-import time
 import json
+import time
+
 import audio
 import requests
 
@@ -10,7 +11,9 @@ PASSWORD = "Qes6oDWENr3a"
 
 
 def dumps(data):
-    return json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '), ensure_ascii=False)
+    return json.dumps(
+        data, sort_keys=True, indent=4, separators=(",", ": "), ensure_ascii=False
+    )
 
 
 class Watson:
@@ -26,7 +29,12 @@ class Watson:
     def text(self):
         data = open("unnamed.wav", "rb").read()
 
-        response = requests.post(url=URL, auth=(USER, PASSWORD), headers={'Content-Type': 'audio/wav'}, data=data)
+        response = requests.post(
+            url=URL,
+            auth=(USER, PASSWORD),
+            headers={"Content-Type": "audio/wav"},
+            data=data,
+        )
 
         data = response.content
         data = data.decode()
@@ -40,13 +48,10 @@ class Watson:
 
         return text
 
+
 if "__main__" == __name__:
     watson = Watson()
     watson.start()
     time.sleep(2)
     watson.stop()
     print(watson.text())
-
-
-
-

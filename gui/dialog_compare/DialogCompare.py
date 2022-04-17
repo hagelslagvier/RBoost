@@ -1,6 +1,6 @@
-from PyQt5.QtCore import Qt, QEvent
-from PyQt5.QtWidgets import QDialog
 from gui.dialog_compare.Ui_DialogCompare import Ui_DialogCompare
+from PyQt5.QtCore import QEvent, Qt
+from PyQt5.QtWidgets import QDialog
 
 
 class DialogCompare(Ui_DialogCompare, QDialog):
@@ -31,6 +31,7 @@ class DialogCompare(Ui_DialogCompare, QDialog):
 
 if __name__ == "__main__":
     import sys
+
     from PyQt5.QtWidgets import QApplication
 
     application = QApplication(sys.argv)

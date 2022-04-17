@@ -1,17 +1,23 @@
 import os.path
 import reprlib
 
-from PyQt5.QtCore import Qt, QSettings,  QPoint, QEvent, pyqtSlot
-from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtWidgets import QMainWindow, QMenu, QAction, QMessageBox, QDesktopWidget, QListWidgetItem, QFileDialog
-
+from core.repository.storage import Storage
+from core.text import mask_text
 from gui.dialog_boost.Ui_MainWindowBoost import Ui_MainWindowBoost
 from gui.dialog_item_add.DialogItemAdd import DialogItemAdd
 from gui.dialog_item_edit.DialogItemEdit import DialogItemEdit
 from gui.quiz_dialog.DialogQuiz import DialogQuiz
-
-from core.repository.storage import Storage
-from core.text import mask_text
+from PyQt5.QtCore import QEvent, QPoint, QSettings, Qt, pyqtSlot
+from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtWidgets import (
+    QAction,
+    QDesktopWidget,
+    QFileDialog,
+    QListWidgetItem,
+    QMainWindow,
+    QMenu,
+    QMessageBox,
+)
 
 
 class Boost(QMainWindow, Ui_MainWindowBoost):
@@ -46,7 +52,9 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
     def __createContextMenus(self):
         self.listWidgetExpressions.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.listWidgetExpressions.customContextMenuRequested.connect(self.__onListWidgetExpressionsContextMenuRequested)
+        self.listWidgetExpressions.customContextMenuRequested.connect(
+            self.__onListWidgetExpressionsContextMenuRequested
+        )
 
         self.menuExpressionsPopup = QMenu(self)
 
@@ -55,12 +63,18 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         actionAddExpression = QAction(iconAdd, "Добавить", self.menuExpressionsPopup)
 
         iconEdit = QIcon()
-        iconEdit.addPixmap(QPixmap(":/all/icons/item_edit.png"), QIcon.Normal, QIcon.Off)
+        iconEdit.addPixmap(
+            QPixmap(":/all/icons/item_edit.png"), QIcon.Normal, QIcon.Off
+        )
         actionEditExpression = QAction(iconEdit, "Изменить", self.menuExpressionsPopup)
 
         iconDelete = QIcon()
-        iconDelete.addPixmap(QPixmap(":/all/icons/item_delete.png"), QIcon.Normal, QIcon.Off)
-        actionDeleteExpression = QAction(iconDelete, "Удалить", self.menuExpressionsPopup)
+        iconDelete.addPixmap(
+            QPixmap(":/all/icons/item_delete.png"), QIcon.Normal, QIcon.Off
+        )
+        actionDeleteExpression = QAction(
+            iconDelete, "Удалить", self.menuExpressionsPopup
+        )
 
         actionAddExpression.triggered.connect(self.__onAddItemClicked)
         actionEditExpression.triggered.connect(self.__onEditItemClicked)
@@ -125,7 +139,6 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         meaning = self.__storage[expression]
         self.textEditMeaning.setText(meaning)
 
-
     @pyqtSlot()
     def __onStartActionTriggered(self):
         hint_index = self.comboBoxHint.currentIndex()
@@ -172,7 +185,9 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
     @pyqtSlot(QPoint)
     def __onListWidgetExpressionsContextMenuRequested(self, point):
-        self.menuExpressionsPopup.popup(self.listWidgetExpressions.viewport().mapToGlobal(point))
+        self.menuExpressionsPopup.popup(
+            self.listWidgetExpressions.viewport().mapToGlobal(point)
+        )
 
     @pyqtSlot()
     def __onAddItemClicked(self):
@@ -183,7 +198,9 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         if key not in list(self.__storage.keys()):
             self.listWidgetExpressions.addItem(key)
         self.listWidgetExpressions.setCurrentItem(QListWidgetItem(key))
-        self.setWindowTitle("Boost - {}*".format(reprlib.repr(self.__storage.path)[1:-1]))
+        self.setWindowTitle(
+            "Boost - {}*".format(reprlib.repr(self.__storage.path)[1:-1])
+        )
         self.__storage[key] = value
 
     @pyqtSlot(str, str)
@@ -211,7 +228,9 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         self.listWidgetExpressions.clear()
         self.listWidgetExpressions.addItems(self.__storage.keys())
 
-        self.setWindowTitle("Boost - {}*".format(reprlib.repr(self.__storage.path)[1:-1]))
+        self.setWindowTitle(
+            "Boost - {}*".format(reprlib.repr(self.__storage.path)[1:-1])
+        )
 
     @pyqtSlot()
     def __onEditItemClicked(self):
@@ -248,15 +267,21 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         else:
             self.textEditMeaning.clear()
 
-        self.setWindowTitle("Boost - {}*".format(reprlib.repr(self.__storage.path)[1:-1]))
+        self.setWindowTitle(
+            "Boost - {}*".format(reprlib.repr(self.__storage.path)[1:-1])
+        )
 
     @pyqtSlot()
     def __onActionNewTriggered(self):
         if self.__storage.is_dirty:
             messageBox = QMessageBox()
             messageBox.setIcon(QMessageBox.Question)
-            messageBox.setWindowTitle('Внимание!')
-            messageBox.setText('Файл {} был изменен! Сохранить изменения?'.format(reprlib.repr(self.__storage.path)))
+            messageBox.setWindowTitle("Внимание!")
+            messageBox.setText(
+                "Файл {} был изменен! Сохранить изменения?".format(
+                    reprlib.repr(self.__storage.path)
+                )
+            )
 
             okButton = messageBox.addButton("Ok", QMessageBox.ActionRole)
             cancelButton = messageBox.addButton("Отмена", QMessageBox.ActionRole)
@@ -274,7 +299,9 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
     def __onSaveActionTriggered(self):
         self.__storage.dump()
         self.__saveSettings()
-        self.setWindowTitle("Boost - {}".format(reprlib.repr(self.__storage.path)[1:-1]))
+        self.setWindowTitle(
+            "Boost - {}".format(reprlib.repr(self.__storage.path)[1:-1])
+        )
 
     @pyqtSlot()
     def __onSaveAsActionTriggered(self):
@@ -287,15 +314,21 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
             self.__storage.dump(path)
             self.__saveSettings()
 
-        self.setWindowTitle("Boost - {}".format(reprlib.repr(self.__storage.path)[1:-1]))
+        self.setWindowTitle(
+            "Boost - {}".format(reprlib.repr(self.__storage.path)[1:-1])
+        )
 
     @pyqtSlot()
     def __onActionOpenTriggered(self):
         if self.__storage.is_dirty:
             messageBox = QMessageBox()
             messageBox.setIcon(QMessageBox.Question)
-            messageBox.setWindowTitle('Внимание!')
-            messageBox.setText('Файл {} был изменен! Сохранить изменения?'.format(reprlib.repr(self.__storage.path)))
+            messageBox.setWindowTitle("Внимание!")
+            messageBox.setText(
+                "Файл {} был изменен! Сохранить изменения?".format(
+                    reprlib.repr(self.__storage.path)
+                )
+            )
 
             okButton = messageBox.addButton("Ok", QMessageBox.ActionRole)
             cancelButton = messageBox.addButton("Отмена", QMessageBox.ActionRole)
@@ -312,8 +345,12 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         if self.__storage.is_dirty:
             messageBox = QMessageBox()
             messageBox.setIcon(QMessageBox.Question)
-            messageBox.setWindowTitle('Внимание!')
-            messageBox.setText('Файл {} был изменен! Сохранить изменения?'.format(reprlib.repr(self.__storage.path)))
+            messageBox.setWindowTitle("Внимание!")
+            messageBox.setText(
+                "Файл {} был изменен! Сохранить изменения?".format(
+                    reprlib.repr(self.__storage.path)
+                )
+            )
 
             okButton = messageBox.addButton("Ok", QMessageBox.ActionRole)
             cancelButton = messageBox.addButton("Отмена", QMessageBox.ActionRole)
@@ -343,8 +380,8 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         if not os.path.exists(path):
             messageBox = QMessageBox()
             messageBox.setIcon(QMessageBox.Critical)
-            messageBox.setWindowTitle('Ошибка!')
-            messageBox.setText('Файл {} не найден!'.format(reprlib.repr(path)))
+            messageBox.setWindowTitle("Ошибка!")
+            messageBox.setText("Файл {} не найден!".format(reprlib.repr(path)))
             messageBox.setStandardButtons(QMessageBox.Ok)
             okButton = messageBox.button(QMessageBox.Ok)
             okButton.setText("Ok")
@@ -400,8 +437,8 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         elif not os.path.exists(storagePath):
             messageBox = QMessageBox()
             messageBox.setIcon(QMessageBox.Critical)
-            messageBox.setWindowTitle('Ошибка')
-            messageBox.setText('Файл {} не найден!'.format(reprlib.repr(storagePath)))
+            messageBox.setWindowTitle("Ошибка")
+            messageBox.setText("Файл {} не найден!".format(reprlib.repr(storagePath)))
             messageBox.setStandardButtons(QMessageBox.Ok)
             okButton = messageBox.button(QMessageBox.Ok)
             okButton.setText("Ok")
@@ -418,6 +455,10 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
     def __saveSettings(self):
         settings = QSettings("RocketLabs", "Boost")
         settings.setValue("comboBoxHint_currentIndex", self.comboBoxHint.currentIndex())
-        settings.setValue("comboboxShuffle_currentIndex", self.comboBoxShuffle.currentIndex())
-        settings.setValue("comboboxOrder_currentIndex", self.comboBoxOrder.currentIndex())
+        settings.setValue(
+            "comboboxShuffle_currentIndex", self.comboBoxShuffle.currentIndex()
+        )
+        settings.setValue(
+            "comboboxOrder_currentIndex", self.comboBoxOrder.currentIndex()
+        )
         settings.setValue("storagePath", self.__storage.path)

@@ -191,12 +191,16 @@ class Ui_DialogQuiz(object):
         self.verticalLayout_12.addWidget(self.pushButton_16)
         self.gridLayout.addLayout(self.verticalLayout_12, 0, 7, 1, 1)
         self.horizontalLayout_2.addWidget(self.widgetAlphabet)
-        spacerItem = QtWidgets.QSpacerItem(401, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(
+            401, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayout_2.addItem(spacerItem)
         self.gridLayout_2.addLayout(self.horizontalLayout_2, 3, 0, 1, 1)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        spacerItem1 = QtWidgets.QSpacerItem(142, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            142, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayout.addItem(spacerItem1)
         self.pushButtonCheck = QtWidgets.QPushButton(DialogQuiz)
         self.pushButtonCheck.setMinimumSize(QtCore.QSize(125, 0))
@@ -205,7 +209,9 @@ class Ui_DialogQuiz(object):
         font.setWeight(75)
         self.pushButtonCheck.setFont(font)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/all/icons/ok.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(
+            QtGui.QPixmap(":/all/icons/ok.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off
+        )
         self.pushButtonCheck.setIcon(icon)
         self.pushButtonCheck.setAutoDefault(False)
         self.pushButtonCheck.setObjectName("pushButtonCheck")
@@ -217,7 +223,9 @@ class Ui_DialogQuiz(object):
         font.setWeight(75)
         self.pushButtonHint.setFont(font)
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/all/icons/help.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(
+            QtGui.QPixmap(":/all/icons/help.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off
+        )
         self.pushButtonHint.setIcon(icon1)
         self.pushButtonHint.setAutoDefault(False)
         self.pushButtonHint.setObjectName("pushButtonHint")
@@ -229,7 +237,9 @@ class Ui_DialogQuiz(object):
         font.setWeight(75)
         self.pushButtonCancel.setFont(font)
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(":/all/icons/cancel.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon2.addPixmap(
+            QtGui.QPixmap(":/all/icons/cancel.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off
+        )
         self.pushButtonCancel.setIcon(icon2)
         self.pushButtonCancel.setAutoDefault(False)
         self.pushButtonCancel.setObjectName("pushButtonCancel")
@@ -264,5 +274,6 @@ class Ui_DialogQuiz(object):
         self.pushButtonCheck.setText(_translate("DialogQuiz", "Проверить"))
         self.pushButtonHint.setText(_translate("DialogQuiz", "Пропустить"))
         self.pushButtonCancel.setText(_translate("DialogQuiz", "Закрыть"))
+
 
 from gui.resources import Resources

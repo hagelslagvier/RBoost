@@ -14,6 +14,7 @@ class DialogItemAdd(BaseDialogItem):
 
 if __name__ == "__main__":
     import sys
+
     from PyQt5.QtWidgets import QApplication
 
     application = QApplication(sys.argv)

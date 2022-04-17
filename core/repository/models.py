@@ -1,10 +1,9 @@
 from datetime import datetime
 
+from core.repository.events import EventType
 from sqlalchemy import Column, DateTime, Enum, ForeignKey, Integer, String, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import backref, relationship
-
-from core.repository.events import EventType
 
 DeclarativeBase = declarative_base()
 

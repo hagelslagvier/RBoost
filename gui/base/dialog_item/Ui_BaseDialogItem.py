@@ -191,12 +191,16 @@ class Ui_BaseDialogItem(object):
         self.verticalLayout_12.addWidget(self.pushButton_16)
         self.gridLayout.addLayout(self.verticalLayout_12, 0, 8, 1, 1)
         self.horizontalLayout_2.addWidget(self.widgetAlphabet)
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayout_2.addItem(spacerItem)
         self.gridLayout_2.addLayout(self.horizontalLayout_2, 3, 0, 1, 1)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        spacerItem1 = QtWidgets.QSpacerItem(142, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            142, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayout.addItem(spacerItem1)
         self.pushButtonOk = QtWidgets.QPushButton(BaseDialogItem)
         font = QtGui.QFont()
@@ -204,7 +208,9 @@ class Ui_BaseDialogItem(object):
         font.setWeight(75)
         self.pushButtonOk.setFont(font)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/all/icons/ok.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(
+            QtGui.QPixmap(":/all/icons/ok.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off
+        )
         self.pushButtonOk.setIcon(icon)
         self.pushButtonOk.setAutoDefault(False)
         self.pushButtonOk.setObjectName("pushButtonOk")
@@ -215,7 +221,9 @@ class Ui_BaseDialogItem(object):
         font.setWeight(75)
         self.pushButtonCancel.setFont(font)
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/all/icons/cancel.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(
+            QtGui.QPixmap(":/all/icons/cancel.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off
+        )
         self.pushButtonCancel.setIcon(icon1)
         self.pushButtonCancel.setAutoDefault(False)
         self.pushButtonCancel.setObjectName("pushButtonCancel")
@@ -247,5 +255,6 @@ class Ui_BaseDialogItem(object):
         self.pushButton_15.setText(_translate("BaseDialogItem", "ẞ"))
         self.pushButton_16.setText(_translate("BaseDialogItem", "ß"))
         self.pushButtonCancel.setText(_translate("BaseDialogItem", "Отменить"))
+
 
 from gui.resources import Resources

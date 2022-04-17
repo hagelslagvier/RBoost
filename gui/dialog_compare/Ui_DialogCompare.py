@@ -9,6 +9,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_DialogCompare(object):
     def setupUi(self, DialogCompare):
         DialogCompare.setObjectName("DialogCompare")
@@ -53,7 +54,9 @@ class Ui_DialogCompare(object):
         self.gridLayout_2.addLayout(self.verticalLayout_4, 2, 0, 1, 1)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        spacerItem = QtWidgets.QSpacerItem(142, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(
+            142, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.horizontalLayout.addItem(spacerItem)
         self.pushButtonOk = QtWidgets.QPushButton(DialogCompare)
         self.pushButtonOk.setMinimumSize(QtCore.QSize(125, 0))
@@ -62,7 +65,9 @@ class Ui_DialogCompare(object):
         font.setWeight(75)
         self.pushButtonOk.setFont(font)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/all/icons/ok.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(
+            QtGui.QPixmap(":/all/icons/ok.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off
+        )
         self.pushButtonOk.setIcon(icon)
         self.pushButtonOk.setAutoDefault(False)
         self.pushButtonOk.setObjectName("pushButtonOk")
@@ -75,8 +80,11 @@ class Ui_DialogCompare(object):
     def retranslateUi(self, DialogCompare):
         _translate = QtCore.QCoreApplication.translate
         DialogCompare.setWindowTitle(_translate("DialogCompare", "Ошибки"))
-        self.labelCorrectAnswer.setText(_translate("DialogCompare", "Правильный ответ:"))
+        self.labelCorrectAnswer.setText(
+            _translate("DialogCompare", "Правильный ответ:")
+        )
         self.labelResult.setText(_translate("DialogCompare", "Результат:"))
         self.pushButtonOk.setText(_translate("DialogCompare", "Ok"))
+
 
 from gui.resources import Resources
