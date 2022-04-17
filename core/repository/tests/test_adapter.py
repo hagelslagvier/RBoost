@@ -2,7 +2,6 @@ import json
 from pathlib import Path
 from unittest.mock import call, patch
 
-from pytest import raises
 from sqlalchemy import asc, create_engine
 from sqlalchemy.engine import Engine
 from sqlalchemy.engine.url import make_url
@@ -191,9 +190,11 @@ def test_if_can_load_content_when_data_file_exists():
 
 
 def test_if_raises_exception_when_data_file_not_exist():
-    with raises(FileNotFoundError):
-        adapter = Adapter()
-        adapter.load(path="./fixtures/nonexistent.json")
+    adapter = Adapter()
+
+    ok = adapter.load(path="./fixtures/nonexistent.json")
+
+    assert ok is False
 
 
 def test_if_can_dump_content():
@@ -223,6 +224,7 @@ def test_if_can_dump_content():
 
     with open(str(file_path), "r") as file:
         data = json.load(file)
+        file_path.unlink()
 
     assert data == {
         "records": [
@@ -259,4 +261,119 @@ def test_if_can_dump_content():
         ],
     }
 
-    file_path.unlink()
+
+def test_if_can_get_content():
+    adapter = Adapter()
+    adapter.load(path="./fixtures/data.json")
+
+    assert adapter.content["records"] == [
+        {
+            "id": 1,
+            "created_on": "2022-04-16 12:54:24.671922",
+            "expression": "foo_expression",
+            "meaning": "foo_meaning",
+            "updated_on": "2022-04-16 12:54:24.671928",
+        },
+        {
+            "id": 2,
+            "created_on": "2022-04-16 12:54:24.672691",
+            "expression": "bar_expression",
+            "meaning": "bar_meaning",
+            "updated_on": "2022-04-16 12:54:24.672695",
+        },
+        {
+            "id": 3,
+            "created_on": "2022-04-16 12:54:24.673138",
+            "expression": "baz_expression",
+            "meaning": "bar_meaning",
+            "updated_on": "2022-04-16 12:54:24.673141",
+        },
+    ]
+
+    assert adapter.content["events"] == [
+        {
+            "id": 1,
+            "created_on": "2022-04-16 12:54:24.676669",
+            "updated_on": "2022-04-16 12:54:24.676672",
+            "event_type": "SUCCESS",
+            "record_id": 1,
+        },
+        {
+            "id": 2,
+            "created_on": "2022-04-16 12:54:24.677945",
+            "updated_on": "2022-04-16 12:54:24.677948",
+            "event_type": "SUCCESS",
+            "record_id": 1,
+        },
+        {
+            "id": 3,
+            "created_on": "2022-04-16 12:54:24.678942",
+            "updated_on": "2022-04-16 12:54:24.678945",
+            "event_type": "SUCCESS",
+            "record_id": 2,
+        },
+        {
+            "id": 4,
+            "created_on": "2022-04-16 12:54:24.679934",
+            "updated_on": "2022-04-16 12:54:24.679938",
+            "event_type": "FAILURE",
+            "record_id": 2,
+        },
+        {
+            "id": 5,
+            "created_on": "2022-04-16 12:54:24.680927",
+            "updated_on": "2022-04-16 12:54:24.680930",
+            "event_type": "HINT",
+            "record_id": 2,
+        },
+        {
+            "id": 6,
+            "created_on": "2022-04-16 12:54:24.681943",
+            "updated_on": "2022-04-16 12:54:24.681946",
+            "event_type": "HINT",
+            "record_id": 3,
+        },
+        {
+            "id": 7,
+            "created_on": "2022-04-16 12:54:24.682933",
+            "updated_on": "2022-04-16 12:54:24.682936",
+            "event_type": "HINT",
+            "record_id": 3,
+        },
+    ]
+
+
+def test_if_can_set_content():
+    file_path = Path(__file__).resolve().parent / "fixtures" / "tmp.json"
+
+    adapter = Adapter()
+
+    content = {
+        "records": [
+            {
+                "id": 1,
+                "created_on": "2022-04-16 12:54:24.671922",
+                "expression": "foo_expression",
+                "meaning": "foo_meaning",
+                "updated_on": "2022-04-16 12:54:24.671928",
+            }
+        ],
+        "events": [
+            {
+                "id": 1,
+                "created_on": "2022-04-16 12:54:24.671922",
+                "updated_on": "2022-04-16 12:54:24.671928",
+                "event_type": "SUCCESS",
+                "record_id": 1,
+            },
+        ],
+    }
+
+    adapter.content = content
+    adapter.dump(path=str(file_path))
+
+    with open(str(file_path)) as file:
+        data = json.load(file)
+        file_path.unlink()
+
+    assert data == content
