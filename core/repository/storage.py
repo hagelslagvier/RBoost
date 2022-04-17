@@ -8,7 +8,8 @@ from sqlalchemy.orm import sessionmaker
 
 class Storage:
     def __init__(self, url: str) -> None:
-        self.engine = create_engine(url)
+        self.url = url
+        self.engine = create_engine(url=self.url)
         self.session_factory = sessionmaker(bind=self.engine)
 
         DeclarativeBase.metadata.create_all(bind=self.engine)
