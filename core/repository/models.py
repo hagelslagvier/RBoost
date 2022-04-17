@@ -26,7 +26,7 @@ class Event(BaseModel):
     record = relationship("Record", backref=backref("events", order_by=record_id))
 
     def __repr__(self):
-        return f"Event(id={self.id})"
+        return f"Event(id={self.id}, record={self.record_id})"
 
 
 class Record(BaseModel):
@@ -34,8 +34,8 @@ class Record(BaseModel):
 
     id = Column(Integer(), primary_key=True)
 
-    expression = Column(String(length=256), unique=True, nullable=False)
-    meaning = Column(Text(length=1024), nullable=False)
+    key = Column(String(length=256), unique=True, nullable=False)
+    value = Column(Text(length=1024), nullable=False)
 
     def __repr__(self):
         return f"Record(id={self.id})"
