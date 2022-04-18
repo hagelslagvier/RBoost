@@ -1,5 +1,5 @@
-import os.path
 import reprlib
+from pathlib import Path
 
 from core.repository.storage import Storage
 from core.text import mask_text
@@ -28,15 +28,14 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
     HINTS_index_to_value[3] = 0.9
     HINTS_index_to_value[4] = 1
 
-    def __init__(self, boost_path):
+    def __init__(self):
         QMainWindow.__init__(self)
         self.setupUi(self)
 
-        self.__boost_path = boost_path
-        self.__storage = Storage(path=boost_path)
-
         self.__customize()
         self.__loadSettings()
+
+        self.__storage_dirty = False
 
     def __customize(self):
         self.__createChildWidgets()
@@ -120,7 +119,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         hint_value = Boost.HINTS_index_to_value.get(hint_index, 0)
 
         self.listWidgetExpressions.clear()
-        for expression in self.__storage.all_expressions():
+        for expression in self.__storage.keys():
             self.listWidgetExpressions.addItem(mask_text(expression, hint_value))
 
         meaning = self.textEditMeaning.toPlainText()
@@ -130,13 +129,13 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
     def __unmask(self):
         self.listWidgetExpressions.clear()
 
-        expressions = self.__storage.all_expressions()
-        for expression in expressions:
-            self.listWidgetExpressions.addItem(expression)
+        keys = self.__storage.keys()
+        for key in keys:
+            self.listWidgetExpressions.addItem(key)
 
-        expression = expressions[0]
+        first_key = keys[0]
         self.listWidgetExpressions.setCurrentRow(0)
-        meaning = self.__storage[expression]
+        meaning = self.__storage[first_key]
         self.textEditMeaning.setText(meaning)
 
     @pyqtSlot()
@@ -170,14 +169,14 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         row = self.listWidgetExpressions.item(currentRow)
 
         key = row.text()
-        value, log = self.__storage.get(key, ("", []))
+        value = self.__storage[key]
 
         self.textEditMeaning.setText(value)
 
     @pyqtSlot(QListWidgetItem)
     def __onItemDoubleClicked(self, item):
         expression = item.text()
-        meaning = self.__storage[expression][0]
+        meaning = self.__storage[expression]
 
         self.__dialogItemEdit.setExpression(expression)
         self.__dialogItemEdit.setMeaning(meaning)
@@ -195,35 +194,29 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
     @pyqtSlot(str, str)
     def __onAddItem(self, key, value):
-        if key not in list(self.__storage.keys()):
-            self.listWidgetExpressions.addItem(key)
+        if key in self.__storage.keys():
+            return
+
+        if not self.__storage_dirty:
+            self.__storage.dump(path=f"{self.__storage.path}.backup")
+            self.__storage_dirty = True
+
+        self.__storage[key] = value
+
+        self.listWidgetExpressions.addItem(key)
         self.listWidgetExpressions.setCurrentItem(QListWidgetItem(key))
+
         self.setWindowTitle(
             "Boost - {}*".format(reprlib.repr(self.__storage.path)[1:-1])
         )
-        self.__storage[key] = value
 
     @pyqtSlot(str, str)
     def __onEditItem(self, key, value):
-        newStorage = Storage(path=self.__storage.path)
-        oldKey = self.__dialogItemEdit.expressionToChange
+        if not self.__storage_dirty:
+            self.__storage.dump(path=f"{self.__storage.path}.backup")
+            self.__storage_dirty = True
 
-        if key in self.__storage.keys():
-            for k, v in self.__storage.items():
-                if k == key:
-                    newStorage[k] = value
-                else:
-                    newStorage[k] = self.__storage[k]
-        else:
-            for k, v in self.__storage.items():
-                if k == oldKey:
-                    newStorage[key] = value
-                else:
-                    newStorage[k] = self.__storage[k]
-
-        del self.__storage
-
-        self.__storage = newStorage
+        self.__storage[key] = value
 
         self.listWidgetExpressions.clear()
         self.listWidgetExpressions.addItems(self.__storage.keys())
@@ -236,7 +229,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
     def __onEditItemClicked(self):
         currentRow = self.listWidgetExpressions.currentRow()
         key = self.listWidgetExpressions.item(currentRow).text()
-        value = self.__storage[key][0]
+        value = self.__storage[key]
 
         self.__dialogItemEdit.setExpression(key)
         self.__dialogItemEdit.setMeaning(value)
@@ -253,6 +246,10 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         key = self.listWidgetExpressions.currentItem().text()
         if not key:
             return
+
+        if not self.__storage_dirty:
+            self.__storage.dump(path=f"{self.__storage.path}.backup")
+            self.__storage_dirty = True
 
         del self.__storage[key]
 
@@ -273,31 +270,39 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
     @pyqtSlot()
     def __onActionNewTriggered(self):
-        if self.__storage.is_dirty:
-            messageBox = QMessageBox()
-            messageBox.setIcon(QMessageBox.Question)
-            messageBox.setWindowTitle("Внимание!")
-            messageBox.setText(
+        if self.__storage_dirty:
+            message_box = QMessageBox()
+            message_box.setIcon(QMessageBox.Question)
+            message_box.setWindowTitle("Внимание!")
+            message_box.setText(
                 "Файл {} был изменен! Сохранить изменения?".format(
                     reprlib.repr(self.__storage.path)
                 )
             )
 
-            okButton = messageBox.addButton("Ok", QMessageBox.ActionRole)
-            cancelButton = messageBox.addButton("Отмена", QMessageBox.ActionRole)
+            ok_button = message_box.addButton("Ok", QMessageBox.ActionRole)
+            cancel_button = message_box.addButton("Отмена", QMessageBox.ActionRole)
 
-            messageBox.exec()
-            if messageBox.clickedButton() == okButton:
+            message_box.exec()
+            if message_box.clickedButton() == ok_button:
                 self.__saveStorage()
+            else:
+                self.__restoreStorage()
 
-        self.__storage.clear()
+        home_directory = Path(__file__).resolve().parents[2]
+        default_path = home_directory / "dictionaries/new.db"
+        self.__storage = Storage(path=str(default_path))
+        self.__storage_dirty = True
+
         self.listWidgetExpressions.clear()
         self.textEditMeaning.clear()
-        self.setWindowTitle("Boost")
+        self.setWindowTitle(
+            "Boost - {}*".format(reprlib.repr(self.__storage.path)[1:-1])
+        )
 
     @pyqtSlot()
     def __onSaveActionTriggered(self):
-        self.__storage.dump()
+        self.__saveStorage()
         self.__saveSettings()
         self.setWindowTitle(
             "Boost - {}".format(reprlib.repr(self.__storage.path)[1:-1])
@@ -305,13 +310,13 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
     @pyqtSlot()
     def __onSaveAsActionTriggered(self):
-        path, _ = QFileDialog.getSaveFileName(self, "Сохранить как...", "", "*.boost")
+        path, _ = QFileDialog.getSaveFileName(self, "Сохранить как...", "", "*.db")
 
         if path:
-            if not str(path).endswith(".boost"):
-                path += ".boost"
+            if not str(path).endswith(".db"):
+                path += ".db"
 
-            self.__storage.dump(path)
+            self.__saveStorage()
             self.__saveSettings()
 
         self.setWindowTitle(
@@ -337,12 +342,12 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
             if messageBox.clickedButton() == okButton:
                 self.__saveStorage()
 
-        path, _ = QFileDialog.getOpenFileName(self, "Открыть...", "", "*.boost")
+        path, _ = QFileDialog.getOpenFileName(self, "Открыть...", "", "*.db")
         if path:
             self.__loadStorage(path)
 
     def closeEvent(self, event):
-        if self.__storage.is_dirty:
+        if self.__storage_dirty:
             messageBox = QMessageBox()
             messageBox.setIcon(QMessageBox.Question)
             messageBox.setWindowTitle("Внимание!")
@@ -363,94 +368,101 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
     def eventFilter(self, object, event):
         if event.type() == QEvent.MouseButtonDblClick:
-
             x = event.pos().x()
             y = event.pos().y()
 
-            itemClicked = self.listWidgetExpressions.itemAt(x, y)
-            if itemClicked:
+            item_clicked = self.listWidgetExpressions.itemAt(x, y)
+            if item_clicked:
                 return QMainWindow.eventFilter(self, object, event)
 
             self.__dialogItemAdd.show()
+
             return True
 
         return QMainWindow.eventFilter(self, object, event)
 
-    def __loadStorage(self, path):
-        if not os.path.exists(path):
-            messageBox = QMessageBox()
-            messageBox.setIcon(QMessageBox.Critical)
-            messageBox.setWindowTitle("Ошибка!")
-            messageBox.setText("Файл {} не найден!".format(reprlib.repr(path)))
-            messageBox.setStandardButtons(QMessageBox.Ok)
-            okButton = messageBox.button(QMessageBox.Ok)
-            okButton.setText("Ok")
-            messageBox.exec()
+    def __loadStorage(self, path: str):
+        if not Path(path).is_file():
+            message_box = QMessageBox()
+            message_box.setIcon(QMessageBox.Critical)
+            message_box.setWindowTitle("Ошибка!")
+            message_box.setText("Файл {} не найден!".format(reprlib.repr(path)))
+            message_box.setStandardButtons(QMessageBox.Ok)
+            ok_button = message_box.button(QMessageBox.Ok)
+            ok_button.setText("Ok")
+            message_box.exec()
 
             return
 
-        self.__storage.clear()
-        self.__storage.load(path=path)
+        self.__storage = Storage(path=path)
+        self.__storage_dirty = False
 
         self.setWindowTitle("Boost - {}".format(reprlib.repr(path)[1:-1]))
         self.listWidgetExpressions.clear()
         self.textEditMeaning.clear()
-        keys = self.__storage.keys()
-        for key in keys:
+
+        for key in self.__storage.keys():
             self.listWidgetExpressions.addItem(key)
+
         self.listWidgetExpressions.setCurrentRow(0)
 
-    def __saveStorage(self, path=None):
-        self.__storage.dump(path)
+    def __saveStorage(self, path: str = None):
+        Path(f"{self.__storage.path}.backup").unlink(missing_ok=True)
 
-    def __createDefaultStorage(self, path):
-        parentDirectoryPath = os.path.dirname(path)
-        if not os.path.exists(parentDirectoryPath):
-            os.mkdir(parentDirectoryPath)
+        path = path or f"{self.__storage.path}.backup"
+        self.__storage.dump(path=path)
+        self.__storage_dirty = False
 
-        storage = Storage(path)
-        storage["hello"] = "used to greet someone"
-        storage.dump()
+    def __restoreStorage(self):
+        Path(f"{self.__storage.path}.backup").rename(target=self.__storage.path)
+        self.__storage_dirty = False
+
+    def __createDefaultStorage(self, path: str):
+        Path(path).touch(mode=0o755, exist_ok=True)
+
+        default_storage = Storage(path=path)
+        default_storage["hello"] = "used to greet someone"
 
     def __loadSettings(self):
         settings = QSettings("RocketLabs", "Boost")
 
-        hintIndex = settings.value("comboBoxHint_currentIndex", 0, type=int)
-        self.comboBoxHint.setCurrentIndex(hintIndex)
+        hint_index = settings.value("comboBoxHint_currentIndex", 0, type=int)
+        self.comboBoxHint.setCurrentIndex(hint_index)
 
-        shuffleIndex = settings.value("comboboxShuffle_currentIndex", 0, type=int)
-        self.comboBoxShuffle.setCurrentIndex(shuffleIndex)
+        shuffle_index = settings.value("comboboxShuffle_currentIndex", 0, type=int)
+        self.comboBoxShuffle.setCurrentIndex(shuffle_index)
 
-        orderIndex = settings.value("comboboxOrder_currentIndex", 0, type=int)
-        self.comboBoxOrder.setCurrentIndex(orderIndex)
+        order_index = settings.value("comboboxOrder_currentIndex", 0, type=int)
+        self.comboBoxOrder.setCurrentIndex(order_index)
 
-        storagePath = settings.value("storagePath", "", type=str)
+        storage_path = settings.value("storagePath", "", type=str)
+        if not storage_path:
+            home_directory = Path(__file__).resolve().parents[2]
+            default_path = home_directory / "dictionaries/hello.db"
 
-        if not storagePath:
-            boost_directory = os.path.dirname(self.__boost_path)
-            full_path = os.path.join(boost_directory, ".dictionaries/hello.boost")
+            if not Path(default_path).is_file():
+                self.__createDefaultStorage(path=str(default_path))
 
-            if not os.path.exists(full_path):
-                self.__createDefaultStorage(full_path)
-            self.__loadStorage(full_path)
+            self.__loadStorage(path=str(default_path))
 
-        elif not os.path.exists(storagePath):
+        elif not Path(storage_path).is_file():
             messageBox = QMessageBox()
             messageBox.setIcon(QMessageBox.Critical)
             messageBox.setWindowTitle("Ошибка")
-            messageBox.setText("Файл {} не найден!".format(reprlib.repr(storagePath)))
+            messageBox.setText("Файл {} не найден!".format(reprlib.repr(storage_path)))
             messageBox.setStandardButtons(QMessageBox.Ok)
             okButton = messageBox.button(QMessageBox.Ok)
             okButton.setText("Ok")
             messageBox.exec()
 
-            boost_directory = os.path.dirname(self.__boost_path)
-            full_path = os.path.join(boost_directory, ".dictionaries/hello.boost")
-            self.__createDefaultStorage(full_path)
-            self.__loadStorage(full_path)
+            home_directory = Path(__file__).resolve().parents[2]
+            default_path = home_directory / "dictionaries/hello.db"
+
+            self.__createDefaultStorage(path=str(default_path))
+            self.__loadStorage(path=str(default_path))
 
         else:
-            self.__loadStorage(storagePath)
+            self.__loadStorage(path=str(storage_path))
 
     def __saveSettings(self):
         settings = QSettings("RocketLabs", "Boost")
@@ -461,4 +473,4 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         settings.setValue(
             "comboboxOrder_currentIndex", self.comboBoxOrder.currentIndex()
         )
-        settings.setValue("storagePath", self.__storage.path)
+        settings.setValue("storagePath", str(self.__storage.path))

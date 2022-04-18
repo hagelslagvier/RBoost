@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import List, Optional
 
 from core.repository.events import EventType
@@ -7,12 +8,14 @@ from sqlalchemy.orm import sessionmaker
 
 
 class Storage:
-    def __init__(self, url: str) -> None:
-        self.url = url
-        self.engine = create_engine(url=self.url)
-        self.session_factory = sessionmaker(bind=self.engine)
+    def __init__(self, path: str) -> None:
+        self.path = Path(path)
+        self.url = None
+        self.engine = None
+        self.session_factory = None
+        self.is_dirty = False
 
-        DeclarativeBase.metadata.create_all(bind=self.engine)
+        self.load(path=str(self.path.resolve()))
 
     def __getitem__(self, key: str) -> Optional[str]:
         session = self.session_factory()
@@ -26,7 +29,12 @@ class Storage:
     def __setitem__(self, key: str, value: str) -> None:
         session = self.session_factory()
 
-        record = Record(key=key, value=value)
+        record = session.query(Record).filter(Record.key == key).one_or_none()
+        if record:
+            record.value = value
+        else:
+            record = Record(key=key, value=value)
+
         session.add(record)
         session.commit()
 
@@ -56,11 +64,41 @@ class Storage:
     def commit_hint_event(self, key):
         self._commit_event(key=key, event_type=EventType.HINT)
 
-    def all_keys(self) -> List[str]:
+    def load(self, path: str) -> None:
+        self.path = Path(path)
+        self.url = f"sqlite:///{self.path.resolve()}"
+        self.engine = create_engine(url=self.url)
+        self.session_factory = sessionmaker(bind=self.engine)
+
+        DeclarativeBase.metadata.create_all(bind=self.engine)
+
+    def dump(self, path: str) -> None:
+        url = f"sqlite:///{Path(path).resolve()}"
+        engine = create_engine(url=url)
+
+        DeclarativeBase.metadata.create_all(bind=engine)
+
+        storage = Storage(path=path)
+
+        for key, value in self.items():
+            storage[key] = value
+
+    def keys(self) -> List[str]:
         session = self.session_factory()
 
         keys = []
-        for key in session.query(Record.key):
-            keys.append(key)
+        for record in session.query(Record):
+            keys.append(record.key)
 
         return keys
+
+    def items(self):
+        session = self.session_factory()
+
+        items = [(record.key, record.value) for record in session.query(Record)]
+
+        return items
+
+    def clear(self):
+        for key in self.keys():
+            self.__delitem__(key=key)
