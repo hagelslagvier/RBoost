@@ -1,4 +1,5 @@
 from pathlib import Path
+from tempfile import NamedTemporaryFile
 from typing import List, Optional
 
 from core.repository.events import EventType
@@ -8,14 +9,14 @@ from sqlalchemy.orm import sessionmaker
 
 
 class Storage:
-    def __init__(self, path: str) -> None:
-        self.path = Path(path)
+    def __init__(self, path: Optional[str] = None) -> None:
+        self.path = Path(path) if path else None
         self.url = None
         self.engine = None
         self.session_factory = None
-        self.is_dirty = False
 
-        self.load(path=str(self.path.resolve()))
+        if self.path:
+            self.load(path=str(self.path.resolve()))
 
     def __getitem__(self, key: str) -> Optional[str]:
         session = self.session_factory()
@@ -102,3 +103,73 @@ class Storage:
     def clear(self):
         for key in self.keys():
             self.__delitem__(key=key)
+
+
+class Repository:
+    def __init__(self, path: str):
+        self.main_storage: Storage = Storage(path=path)
+        self.backup_storage: Optional[Storage] = None
+        self.is_dirty: bool = False
+
+    def __getitem__(self, key: str) -> Optional[str]:
+        value = self.main_storage[key]
+
+        return value
+
+    def __setitem__(self, key: str, value: str) -> None:
+        if not self.is_dirty:
+            self.backup()
+            self.is_dirty = True
+
+        self.main_storage[key] = value
+
+    def __delitem__(self, key: str) -> None:
+        if not self.is_dirty:
+            self.backup()
+            self.is_dirty = True
+
+        del self.main_storage[key]
+
+    def __del__(self):
+        if hasattr(self.backup_storage, "file"):
+            self.backup_storage.file.close()
+
+    def backup(self):
+        if not self.is_dirty:
+            return
+
+        file = NamedTemporaryFile("w+")
+        self.backup_storage = Storage(path=file.name)
+        self.backup_storage.file = file
+
+        for k, v in self.main_storage.items():
+            self.backup_storage[k] = v
+
+        self.is_dirty = False
+
+    def restore(self):
+        if not self.is_dirty:
+            return
+
+        for k, v in self.backup_storage.items():
+            self.main_storage[k] = v
+
+        self.backup_storage.file.close()
+        self.backup_storage = None
+        self.is_dirty = False
+
+    def load(self, path: str):
+        self.main_storage = Storage(path=path)
+        self.backup_storage = None
+        self.is_dirty = False
+
+    def dump(self, path: str = None):
+        pass
+
+
+if __name__ == "__main__":
+    r = Repository(path="./fooo.db")
+    r["foo"] = "bar"
+
+    print(r.is_dirty)
+    print(r["foo"])
