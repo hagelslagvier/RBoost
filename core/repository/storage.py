@@ -120,16 +120,14 @@ class Repository:
         return value
 
     def __setitem__(self, key: str, value: str) -> None:
-        if not self.is_dirty:
-            self.backup()
-            self.is_dirty = True
+        self.is_dirty = True
+        self.backup()
 
         self.main_storage[key] = value
 
     def __delitem__(self, key: str) -> None:
-        if not self.is_dirty:
-            self.backup()
-            self.is_dirty = True
+        self.is_dirty = True
+        self.backup()
 
         del self.main_storage[key]
 
@@ -141,25 +139,27 @@ class Repository:
         if not self.is_dirty:
             return
 
-        file = NamedTemporaryFile("w+")
-        self.backup_storage = Storage(path=file.name)
-        self.backup_storage.file = file
+        if not self.backup_storage:
+            file = NamedTemporaryFile("w+")
+            self.backup_storage = Storage(path=file.name)
+            self.backup_storage.file = file
 
         for k, v in self.main_storage.items():
+            print("K, V ", k, v)
             self.backup_storage[k] = v
-
-        self.is_dirty = False
 
     def restore(self):
         if not self.is_dirty:
             return
 
+        self.is_dirty = False
+
+        self.main_storage.clear()
         for k, v in self.backup_storage.items():
             self.main_storage[k] = v
 
         self.backup_storage.file.close()
         self.backup_storage = None
-        self.is_dirty = False
 
     def load(self, path: str):
         self.main_storage = Storage(path=path)
