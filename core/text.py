@@ -1,7 +1,8 @@
 import re
 
-from core.events import event
 from fuzzywuzzy import fuzz
+
+from core.events import event
 
 
 def mask_text(text, degree):

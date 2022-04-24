@@ -1,9 +1,10 @@
 from datetime import datetime
 
-from core.repository.events import EventType
 from sqlalchemy import Column, DateTime, Enum, ForeignKey, Integer, String, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import backref, relationship
+
+from core.repository.events import EventType
 
 DeclarativeBase = declarative_base()
 
@@ -25,7 +26,7 @@ class Event(BaseModel):
     record = relationship("Record", backref=backref("events", order_by=record_id))
 
     def __repr__(self):
-        return f"Event(id={self.id}, record={self.record_id})"
+        return f"Event(id={self.id}, event_type={self.event_type.name}, record_id={self.record_id})"
 
 
 class Record(BaseModel):

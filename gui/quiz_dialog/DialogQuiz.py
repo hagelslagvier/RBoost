@@ -1,13 +1,14 @@
 from random import randint
 
+from PyQt5.QtCore import QEvent, Qt, QTimer, pyqtSignal, pyqtSlot
+from PyQt5.QtGui import QFocusEvent, QTextCursor
+from PyQt5.QtWidgets import QDialog
+
 from core.diff import diff_match_patch
 from core.events import event
 from core.text import compare, mask_text
 from gui.dialog_compare.DialogCompare import DialogCompare
 from gui.quiz_dialog.Ui_DialogQuiz import Ui_DialogQuiz
-from PyQt5.QtCore import QEvent, Qt, QTimer, pyqtSignal, pyqtSlot
-from PyQt5.QtGui import QFocusEvent, QTextCursor
-from PyQt5.QtWidgets import QDialog
 
 
 class DialogQuiz(Ui_DialogQuiz, QDialog):

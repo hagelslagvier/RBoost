@@ -2,21 +2,22 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile
 from typing import List, Optional
 
+from sqlalchemy import asc, create_engine
+from sqlalchemy.orm import sessionmaker
+
 from core.repository.events import EventType
 from core.repository.models import DeclarativeBase, Event, Record
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 
 
 class Storage:
     def __init__(self, path: Optional[str] = None) -> None:
-        self.path = Path(path) if path else None
+        self.path = path or ":memory:"
         self.url = None
         self.engine = None
         self.session_factory = None
 
         if self.path:
-            self.load(path=str(self.path.resolve()))
+            self.load(path=self.path)
 
     def __getitem__(self, key: str) -> Optional[str]:
         session = self.session_factory()
@@ -66,8 +67,10 @@ class Storage:
         self._commit_event(key=key, event_type=EventType.HINT)
 
     def load(self, path: str) -> None:
-        self.path = Path(path)
-        self.url = f"sqlite:///{self.path.resolve()}"
+        self.path = path
+        self.url = f"sqlite:///{self.path if self.path == ':memory:' else Path(self.path).resolve()}"
+        print(">>>> ", self.url)
+
         self.engine = create_engine(url=self.url)
         self.session_factory = sessionmaker(bind=self.engine)
 
@@ -88,7 +91,7 @@ class Storage:
         session = self.session_factory()
 
         keys = []
-        for record in session.query(Record):
+        for record in session.query(Record).order_by(asc(Record.id)):
             keys.append(record.key)
 
         return keys

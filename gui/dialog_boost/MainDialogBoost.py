@@ -1,12 +1,6 @@
 import reprlib
 from pathlib import Path
 
-from core.repository.storage import Storage
-from core.text import mask_text
-from gui.dialog_boost.Ui_MainWindowBoost import Ui_MainWindowBoost
-from gui.dialog_item_add.DialogItemAdd import DialogItemAdd
-from gui.dialog_item_edit.DialogItemEdit import DialogItemEdit
-from gui.quiz_dialog.DialogQuiz import DialogQuiz
 from PyQt5.QtCore import QEvent, QPoint, QSettings, Qt, pyqtSlot
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import (
@@ -18,6 +12,13 @@ from PyQt5.QtWidgets import (
     QMenu,
     QMessageBox,
 )
+
+from core.repository.storage import Storage
+from core.text import mask_text
+from gui.dialog_boost.Ui_MainWindowBoost import Ui_MainWindowBoost
+from gui.dialog_item_add.DialogItemAdd import DialogItemAdd
+from gui.dialog_item_edit.DialogItemEdit import DialogItemEdit
+from gui.quiz_dialog.DialogQuiz import DialogQuiz
 
 
 class Boost(QMainWindow, Ui_MainWindowBoost):

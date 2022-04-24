@@ -1,6 +1,7 @@
-from gui.dialog_compare.Ui_DialogCompare import Ui_DialogCompare
 from PyQt5.QtCore import QEvent, Qt
 from PyQt5.QtWidgets import QDialog
+
+from gui.dialog_compare.Ui_DialogCompare import Ui_DialogCompare
 
 
 class DialogCompare(Ui_DialogCompare, QDialog):

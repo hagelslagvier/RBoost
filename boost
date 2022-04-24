@@ -2,8 +2,9 @@
 
 import sys
 
-from gui.dialog_boost.MainDialogBoost import Boost
 from PyQt5.QtWidgets import QApplication
+
+from gui.dialog_boost.MainDialogBoost import Boost
 
 application = QApplication(sys.argv)
 

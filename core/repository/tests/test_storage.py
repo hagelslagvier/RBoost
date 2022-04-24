@@ -1,7 +1,27 @@
 from pathlib import Path
+from typing import Dict
+
+from sqlalchemy import asc
+
+from core.repository.models import Event, Record
 from core.repository.storage import Storage
 
-import uuid
+
+def _format_event(event: Event) -> Dict:
+    return {
+        "id": event.id,
+        "event_type": event.event_type.name,
+        "record_id": event.record_id,
+    }
+
+
+def _format_record(record: Record) -> Dict:
+    return {
+        "id": record.id,
+        "key": record.key,
+        "value": record.value,
+        "events": [_format_event(event=event) for event in record.events],
+    }
 
 
 def test_if_can_create_storage():
@@ -17,47 +37,204 @@ def test_if_can_create_storage():
 
 
 def test_if_can_get_item():
-    here = Path(__file__).parent.resolve()
-    path = here / "fixtures/boost.db"
+    storage = Storage()
 
-    storage = Storage(path=str(path))
+    session = storage.session_factory()
+    records = session.query(Record).all()
+    assert records == []
+    assert storage.keys() == []
+    assert storage["foo"] is None
 
+    record = Record(key="foo", value="bar")
+    session.add(record)
+    session.commit()
+
+    records = [_format_record(record=record) for record in session.query(Record).all()]
+    assert records == [{"events": [], "id": 1, "key": "foo", "value": "bar"}]
+    assert storage.keys() == ["foo"]
     assert storage["foo"] == "bar"
 
 
 def test_if_can_set_item():
-    here = Path(__file__).parent.resolve()
-    file_name = str(uuid.uuid4())
-    path = here / f"fixtures/{file_name}.db"
+    storage = Storage()
 
-    storage = Storage(path=str(path))
-    storage["spam"] = "eggs"
+    session = storage.session_factory()
+    records = session.query(Record).all()
+    assert records == []
+    assert storage.keys() == []
+    assert storage["foo"] is None
 
-    try:
-        assert storage["spam"] == "eggs"
+    storage["foo"] = "bar"
 
-    finally:
-        Path(path).unlink(missing_ok=True)
+    records = [_format_record(record=record) for record in session.query(Record).all()]
+    assert records == [{"events": [], "id": 1, "key": "foo", "value": "bar"}]
+    assert storage.keys() == ["foo"]
+    assert storage["foo"] == "bar"
 
 
 def test_if_can_del_item():
-    here = Path(__file__).parent.resolve()
-    file_name = str(uuid.uuid4())
-    path = here / f"fixtures/{file_name}.db"
-
-    storage = Storage(path=str(path))
+    storage = Storage()
+    storage["foo"] = "bar"
     storage["spam"] = "eggs"
 
-    try:
-        assert "spam" in storage.keys()
+    session = storage.session_factory()
+    records = [
+        _format_record(record=record)
+        for record in session.query(Record).order_by(asc(Record.id)).all()
+    ]
+    assert records == [
+        {"id": 1, "key": "foo", "value": "bar", "events": []},
+        {"id": 2, "key": "spam", "value": "eggs", "events": []},
+    ]
+    assert storage.keys() == ["foo", "spam"]
 
-        del storage["spam"]
+    del storage["spam"]
 
-        assert "spam" not in storage.keys()
-
-    finally:
-        Path(path).unlink(missing_ok=True)
+    records = [
+        _format_record(record=record)
+        for record in session.query(Record).order_by(asc(Record.id)).all()
+    ]
+    assert records == [
+        {"id": 1, "key": "foo", "value": "bar", "events": []},
+    ]
+    assert storage.keys() == ["foo"]
 
 
 def test_if_can_commit_success_event():
-    
+    storage = Storage()
+
+    session = storage.session_factory()
+    records = session.query(Record).all()
+    events = session.query(Event).all()
+
+    assert records == []
+    assert events == []
+
+    storage["foo"] = "bar"
+    storage.commit_success_event(key="foo")
+
+    records = [
+        _format_record(record=record)
+        for record in session.query(Record).order_by(asc(Record.id)).all()
+    ]
+    assert records == [
+        {
+            "id": 1,
+            "key": "foo",
+            "value": "bar",
+            "events": [{"id": 1, "event_type": "SUCCESS", "record_id": 1}],
+        }
+    ]
+
+    events = [
+        _format_event(event=event)
+        for event in session.query(Event).order_by(asc(Event.id)).all()
+    ]
+    assert events == [{"id": 1, "event_type": "SUCCESS", "record_id": 1}]
+
+
+def test_if_can_commit_hint_event():
+    storage = Storage()
+
+    session = storage.session_factory()
+    records = session.query(Record).all()
+    events = session.query(Event).all()
+
+    assert records == []
+    assert events == []
+
+    storage["foo"] = "bar"
+    storage.commit_hint_event(key="foo")
+
+    records = [
+        _format_record(record=record)
+        for record in session.query(Record).order_by(asc(Record.id)).all()
+    ]
+    assert records == [
+        {
+            "events": [{"event_type": "HINT", "id": 1, "record_id": 1}],
+            "id": 1,
+            "key": "foo",
+            "value": "bar",
+        }
+    ]
+
+    events = [
+        _format_event(event=event)
+        for event in session.query(Event).order_by(asc(Event.id)).all()
+    ]
+    assert events == [{"event_type": "HINT", "id": 1, "record_id": 1}]
+
+
+def test_if_can_commit_failure_event():
+    storage = Storage()
+
+    session = storage.session_factory()
+    records = session.query(Record).all()
+    events = session.query(Event).all()
+
+    assert records == []
+    assert events == []
+
+    storage["foo"] = "bar"
+    storage.commit_failure_event(key="foo")
+
+    records = [
+        _format_record(record=record)
+        for record in session.query(Record).order_by(asc(Record.id)).all()
+    ]
+    assert records == [
+        {
+            "events": [{"event_type": "FAILURE", "id": 1, "record_id": 1}],
+            "id": 1,
+            "key": "foo",
+            "value": "bar",
+        }
+    ]
+
+    events = [
+        _format_event(event=event)
+        for event in session.query(Event).order_by(asc(Event.id)).all()
+    ]
+    assert events == [{"event_type": "FAILURE", "id": 1, "record_id": 1}]
+
+
+def test_if_can_return_keys():
+    storage = Storage()
+
+    assert storage.keys() == []
+
+    storage["foo"] = "1"
+    storage["bar"] = "2"
+    storage["baz"] = "3"
+
+    assert storage.keys() == ["foo", "bar", "baz"]
+
+
+def test_if_can_return_items():
+    storage = Storage()
+
+    assert storage.keys() == []
+
+    storage["foo"] = "1"
+    storage["bar"] = "2"
+    storage["baz"] = "3"
+
+    assert storage.items() == [("foo", "1"), ("bar", "2"), ("baz", "3")]
+
+
+def test_if_can_clear_items():
+    storage = Storage()
+
+    assert storage.keys() == []
+
+    storage["foo"] = "1"
+    storage["bar"] = "2"
+    storage["baz"] = "3"
+
+    assert storage.items() == [("foo", "1"), ("bar", "2"), ("baz", "3")]
+
+    storage.clear()
+
+    assert storage.keys() == []
+    assert storage.items() == []
