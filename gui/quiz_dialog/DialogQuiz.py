@@ -89,7 +89,7 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
 
     def hideEvent(self, hideEvent):
         self.onDialogHidden.emit()
-        self.storage.dump()
+        # self.storage.dump()
 
     @pyqtSlot()
     def __onAlphabetButtonClicked(self):

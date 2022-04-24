@@ -13,7 +13,7 @@ from PyQt5.QtWidgets import (
     QMessageBox,
 )
 
-from core.repository.storage import Storage
+from core.repository.storage import Repository
 from core.text import mask_text
 from gui.dialog_boost.Ui_MainWindowBoost import Ui_MainWindowBoost
 from gui.dialog_item_add.DialogItemAdd import DialogItemAdd
@@ -35,8 +35,6 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
         self.__customize()
         self.__loadSettings()
-
-        self.__storage_dirty = False
 
     def __customize(self):
         self.__createChildWidgets()
@@ -120,7 +118,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         hint_value = Boost.HINTS_index_to_value.get(hint_index, 0)
 
         self.listWidgetExpressions.clear()
-        for expression in self.__storage.keys():
+        for expression in self.__repository.keys():
             self.listWidgetExpressions.addItem(mask_text(expression, hint_value))
 
         meaning = self.textEditMeaning.toPlainText()
@@ -130,13 +128,13 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
     def __unmask(self):
         self.listWidgetExpressions.clear()
 
-        keys = self.__storage.keys()
+        keys = self.__repository.keys()
         for key in keys:
             self.listWidgetExpressions.addItem(key)
 
         first_key = keys[0]
         self.listWidgetExpressions.setCurrentRow(0)
-        meaning = self.__storage[first_key]
+        meaning = self.__repository[first_key]
         self.textEditMeaning.setText(meaning)
 
     @pyqtSlot()
@@ -147,7 +145,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         self.__dialogQuiz.hints = hint_value
         self.__dialogQuiz.shuffle = self.comboBoxShuffle.currentIndex()
         self.__dialogQuiz.order = self.comboBoxOrder.currentIndex()
-        self.__dialogQuiz.storage = self.__storage
+        self.__dialogQuiz.storage = self.__repository
         self.__dialogQuiz.show()
 
     @pyqtSlot()
@@ -170,14 +168,14 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         row = self.listWidgetExpressions.item(currentRow)
 
         key = row.text()
-        value = self.__storage[key]
+        value = self.__repository[key]
 
         self.textEditMeaning.setText(value)
 
     @pyqtSlot(QListWidgetItem)
     def __onItemDoubleClicked(self, item):
         expression = item.text()
-        meaning = self.__storage[expression]
+        meaning = self.__repository[expression]
 
         self.__dialogItemEdit.setExpression(expression)
         self.__dialogItemEdit.setMeaning(meaning)
@@ -195,42 +193,42 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
     @pyqtSlot(str, str)
     def __onAddItem(self, key, value):
-        if key in self.__storage.keys():
+        if key in self.__repository.keys():
             return
 
         if not self.__storage_dirty:
-            self.__storage.dump(path=f"{self.__storage.path}.backup")
+            self.__repository.dump(path=f"{self.__repository.path}.backup")
             self.__storage_dirty = True
 
-        self.__storage[key] = value
+        self.__repository[key] = value
 
         self.listWidgetExpressions.addItem(key)
         self.listWidgetExpressions.setCurrentItem(QListWidgetItem(key))
 
         self.setWindowTitle(
-            "Boost - {}*".format(reprlib.repr(self.__storage.path)[1:-1])
+            "Boost - {}*".format(reprlib.repr(self.__repository.path)[1:-1])
         )
 
     @pyqtSlot(str, str)
     def __onEditItem(self, key, value):
         if not self.__storage_dirty:
-            self.__storage.dump(path=f"{self.__storage.path}.backup")
+            self.__repository.dump(path=f"{self.__repository.path}.backup")
             self.__storage_dirty = True
 
-        self.__storage[key] = value
+        self.__repository[key] = value
 
         self.listWidgetExpressions.clear()
-        self.listWidgetExpressions.addItems(self.__storage.keys())
+        self.listWidgetExpressions.addItems(self.__repository.keys())
 
         self.setWindowTitle(
-            "Boost - {}*".format(reprlib.repr(self.__storage.path)[1:-1])
+            "Boost - {}*".format(reprlib.repr(self.__repository.path)[1:-1])
         )
 
     @pyqtSlot()
     def __onEditItemClicked(self):
         currentRow = self.listWidgetExpressions.currentRow()
         key = self.listWidgetExpressions.item(currentRow).text()
-        value = self.__storage[key]
+        value = self.__repository[key]
 
         self.__dialogItemEdit.setExpression(key)
         self.__dialogItemEdit.setMeaning(value)
@@ -249,16 +247,16 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
             return
 
         if not self.__storage_dirty:
-            self.__storage.dump(path=f"{self.__storage.path}.backup")
+            self.__repository.dump(path=f"{self.__repository.path}.backup")
             self.__storage_dirty = True
 
-        del self.__storage[key]
+        del self.__repository[key]
 
         self.listWidgetExpressions.clear()
 
-        expressions = self.__storage.keys()
+        expressions = self.__repository.keys()
         if expressions:
-            self.listWidgetExpressions.addItems(self.__storage.keys())
+            self.listWidgetExpressions.addItems(self.__repository.keys())
 
             previous_row = row - 1 if row > 0 else 0
             self.listWidgetExpressions.setCurrentRow(previous_row)
@@ -266,18 +264,18 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
             self.textEditMeaning.clear()
 
         self.setWindowTitle(
-            "Boost - {}*".format(reprlib.repr(self.__storage.path)[1:-1])
+            "Boost - {}*".format(reprlib.repr(self.__repository.path)[1:-1])
         )
 
     @pyqtSlot()
     def __onActionNewTriggered(self):
-        if self.__storage_dirty:
+        if self.__repository.is_dirty:
             message_box = QMessageBox()
             message_box.setIcon(QMessageBox.Question)
             message_box.setWindowTitle("Внимание!")
             message_box.setText(
                 "Файл {} был изменен! Сохранить изменения?".format(
-                    reprlib.repr(self.__storage.path)
+                    reprlib.repr(self.__repository.path)
                 )
             )
 
@@ -286,53 +284,54 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
             message_box.exec()
             if message_box.clickedButton() == ok_button:
-                self.__saveStorage()
+                self.__saveRepository()
             else:
-                self.__restoreStorage()
+                self.__restoreRepository()
 
         home_directory = Path(__file__).resolve().parents[2]
         default_path = home_directory / "dictionaries/new.db"
-        self.__storage = Storage(path=str(default_path))
-        self.__storage_dirty = True
+        self.__repository = Repository(path=str(default_path))
 
         self.listWidgetExpressions.clear()
         self.textEditMeaning.clear()
         self.setWindowTitle(
-            "Boost - {}*".format(reprlib.repr(self.__storage.path)[1:-1])
+            "Boost - {}*".format(reprlib.repr(self.__repository.path)[1:-1])
         )
 
     @pyqtSlot()
     def __onSaveActionTriggered(self):
-        self.__saveStorage()
+        self.__saveRepository()
         self.__saveSettings()
         self.setWindowTitle(
-            "Boost - {}".format(reprlib.repr(self.__storage.path)[1:-1])
+            "Boost - {}".format(reprlib.repr(self.__repository.path)[1:-1])
         )
 
     @pyqtSlot()
     def __onSaveAsActionTriggered(self):
         path, _ = QFileDialog.getSaveFileName(self, "Сохранить как...", "", "*.db")
 
-        if path:
-            if not str(path).endswith(".db"):
-                path += ".db"
+        if not path:
+            return
 
-            self.__saveStorage()
-            self.__saveSettings()
+        if not str(path).endswith(".db"):
+            path += ".db"
+
+        self.__saveRepository(path=path)
+        self.__saveSettings()
 
         self.setWindowTitle(
-            "Boost - {}".format(reprlib.repr(self.__storage.path)[1:-1])
+            "Boost - {}".format(reprlib.repr(self.__repository.path)[1:-1])
         )
 
     @pyqtSlot()
     def __onActionOpenTriggered(self):
-        if self.__storage.is_dirty:
+        if self.__repository.is_dirty:
             messageBox = QMessageBox()
             messageBox.setIcon(QMessageBox.Question)
             messageBox.setWindowTitle("Внимание!")
             messageBox.setText(
                 "Файл {} был изменен! Сохранить изменения?".format(
-                    reprlib.repr(self.__storage.path)
+                    reprlib.repr(self.__repository.path)
                 )
             )
 
@@ -341,20 +340,20 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
             messageBox.exec()
             if messageBox.clickedButton() == okButton:
-                self.__saveStorage()
+                self.__saveRepository()
 
         path, _ = QFileDialog.getOpenFileName(self, "Открыть...", "", "*.db")
         if path:
-            self.__loadStorage(path)
+            self.__loadRepository(path)
 
     def closeEvent(self, event):
-        if self.__storage_dirty:
+        if self.__repository.is_dirty:
             messageBox = QMessageBox()
             messageBox.setIcon(QMessageBox.Question)
             messageBox.setWindowTitle("Внимание!")
             messageBox.setText(
                 "Файл {} был изменен! Сохранить изменения?".format(
-                    reprlib.repr(self.__storage.path)
+                    reprlib.repr(self.__repository.path)
                 )
             )
 
@@ -363,7 +362,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
             messageBox.exec()
             if messageBox.clickedButton() == okButton:
-                self.__saveStorage()
+                self.__saveRepository()
 
         self.__saveSettings()
 
@@ -382,7 +381,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
         return QMainWindow.eventFilter(self, object, event)
 
-    def __loadStorage(self, path: str):
+    def __loadRepository(self, path: str):
         if not Path(path).is_file():
             message_box = QMessageBox()
             message_box.setIcon(QMessageBox.Critical)
@@ -395,34 +394,29 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
             return
 
-        self.__storage = Storage(path=path)
-        self.__storage_dirty = False
+        self.__repository = Repository(path=path)
 
         self.setWindowTitle("Boost - {}".format(reprlib.repr(path)[1:-1]))
         self.listWidgetExpressions.clear()
         self.textEditMeaning.clear()
 
-        for key in self.__storage.keys():
+        for key in self.__repository.keys():
             self.listWidgetExpressions.addItem(key)
 
         self.listWidgetExpressions.setCurrentRow(0)
 
-    def __saveStorage(self, path: str = None):
-        Path(f"{self.__storage.path}.backup").unlink(missing_ok=True)
+    def __saveRepository(self, path: str = None):
+        if not path:
+            return
 
-        path = path or f"{self.__storage.path}.backup"
-        self.__storage.dump(path=path)
-        self.__storage_dirty = False
+        self.__repository.save(path=path)
 
-    def __restoreStorage(self):
-        Path(f"{self.__storage.path}.backup").rename(target=self.__storage.path)
-        self.__storage_dirty = False
+    def __restoreRepository(self):
+        self.__repository.restore()
 
-    def __createDefaultStorage(self, path: str):
-        Path(path).touch(mode=0o755, exist_ok=True)
-
-        default_storage = Storage(path=path)
-        default_storage["hello"] = "used to greet someone"
+    def __createDefaultRepository(self, path: str):
+        default_repository = Repository(path=path)
+        default_repository["hello"] = "used to greet someone"
 
     def __loadSettings(self):
         settings = QSettings("RocketLabs", "Boost")
@@ -436,21 +430,23 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         order_index = settings.value("comboboxOrder_currentIndex", 0, type=int)
         self.comboBoxOrder.setCurrentIndex(order_index)
 
-        storage_path = settings.value("storagePath", "", type=str)
-        if not storage_path:
+        repository_path = settings.value("repositoryPath", "", type=str)
+        if not repository_path:
             home_directory = Path(__file__).resolve().parents[2]
             default_path = home_directory / "dictionaries/hello.db"
 
             if not Path(default_path).is_file():
-                self.__createDefaultStorage(path=str(default_path))
+                self.__createDefaultRepository(path=str(default_path))
 
-            self.__loadStorage(path=str(default_path))
+            self.__loadRepository(path=str(default_path))
 
-        elif not Path(storage_path).is_file():
+        elif not Path(repository_path).is_file():
             messageBox = QMessageBox()
             messageBox.setIcon(QMessageBox.Critical)
             messageBox.setWindowTitle("Ошибка")
-            messageBox.setText("Файл {} не найден!".format(reprlib.repr(storage_path)))
+            messageBox.setText(
+                "Файл {} не найден!".format(reprlib.repr(repository_path))
+            )
             messageBox.setStandardButtons(QMessageBox.Ok)
             okButton = messageBox.button(QMessageBox.Ok)
             okButton.setText("Ok")
@@ -459,11 +455,11 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
             home_directory = Path(__file__).resolve().parents[2]
             default_path = home_directory / "dictionaries/hello.db"
 
-            self.__createDefaultStorage(path=str(default_path))
-            self.__loadStorage(path=str(default_path))
+            self.__createDefaultRepository(path=str(default_path))
+            self.__loadRepository(path=str(default_path))
 
         else:
-            self.__loadStorage(path=str(storage_path))
+            self.__loadRepository(path=str(repository_path))
 
     def __saveSettings(self):
         settings = QSettings("RocketLabs", "Boost")
@@ -474,4 +470,4 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         settings.setValue(
             "comboboxOrder_currentIndex", self.comboBoxOrder.currentIndex()
         )
-        settings.setValue("storagePath", str(self.__storage.path))
+        settings.setValue("repositoryPath", str(self.__repository.path))

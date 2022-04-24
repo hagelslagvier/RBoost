@@ -1,3 +1,4 @@
+import shutil
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 from typing import List, Optional
@@ -69,8 +70,6 @@ class Storage:
     def load(self, path: str) -> None:
         self.path = path
         self.url = f"sqlite:///{self.path if self.path == ':memory:' else Path(self.path).resolve()}"
-        print(">>>> ", self.url)
-
         self.engine = create_engine(url=self.url)
         self.session_factory = sessionmaker(bind=self.engine)
 
@@ -135,7 +134,11 @@ class Repository:
         if hasattr(self.backup_storage, "file"):
             self.backup_storage.file.close()
 
-    def backup(self):
+    @property
+    def path(self) -> str:
+        return self.main_storage.path
+
+    def backup(self) -> None:
         if not self.is_dirty:
             return
 
@@ -145,10 +148,9 @@ class Repository:
             self.backup_storage.file = file
 
         for k, v in self.main_storage.items():
-            print("K, V ", k, v)
             self.backup_storage[k] = v
 
-    def restore(self):
+    def restore(self) -> None:
         if not self.is_dirty:
             return
 
@@ -161,18 +163,21 @@ class Repository:
         self.backup_storage.file.close()
         self.backup_storage = None
 
-    def load(self, path: str):
+    def load(self, path: str) -> None:
         self.main_storage = Storage(path=path)
         self.backup_storage = None
         self.is_dirty = False
 
-    def dump(self, path: str = None):
-        pass
+    def save(self, path: str) -> None:
+        destination = Path(path).resolve()
+        source = Path(self.main_storage.path).resolve()
 
+        shutil.copy(source, destination)
 
-if __name__ == "__main__":
-    r = Repository(path="./fooo.db")
-    r["foo"] = "bar"
+        self.main_storage.path = path
 
-    print(r.is_dirty)
-    print(r["foo"])
+    def keys(self):
+        return self.main_storage.keys()
+
+    def items(self):
+        return self.main_storage.items()
