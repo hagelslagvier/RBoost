@@ -435,9 +435,9 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
             home_directory = Path(__file__).resolve().parents[2]
             default_path = home_directory / "dictionaries/hello.db"
 
-            if not Path(default_path).is_file():
-                self.__createDefaultRepository(path=str(default_path))
+            Path(default_path).unlink(missing_ok=True)
 
+            self.__createDefaultRepository(path=str(default_path))
             self.__loadRepository(path=str(default_path))
 
         elif not Path(repository_path).is_file():
