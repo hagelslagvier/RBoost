@@ -441,16 +441,16 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
             self.__loadRepository(path=str(default_path))
 
         elif not Path(repository_path).is_file():
-            messageBox = QMessageBox()
-            messageBox.setIcon(QMessageBox.Critical)
-            messageBox.setWindowTitle("Ошибка")
-            messageBox.setText(
+            message_box = QMessageBox()
+            message_box.setIcon(QMessageBox.Critical)
+            message_box.setWindowTitle("Ошибка")
+            message_box.setText(
                 "Файл {} не найден!".format(reprlib.repr(repository_path))
             )
-            messageBox.setStandardButtons(QMessageBox.Ok)
-            okButton = messageBox.button(QMessageBox.Ok)
-            okButton.setText("Ok")
-            messageBox.exec()
+            message_box.setStandardButtons(QMessageBox.Ok)
+            ok_button = message_box.button(QMessageBox.Ok)
+            ok_button.setText("Ok")
+            message_box.exec()
 
             home_directory = Path(__file__).resolve().parents[2]
             default_path = home_directory / "dictionaries/hello.db"
