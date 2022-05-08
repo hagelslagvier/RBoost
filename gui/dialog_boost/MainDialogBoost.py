@@ -196,10 +196,6 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         if key in self.__repository.keys():
             return
 
-        if not self.__storage_dirty:
-            self.__repository.dump(path=f"{self.__repository.path}.backup")
-            self.__storage_dirty = True
-
         self.__repository[key] = value
 
         self.listWidgetExpressions.addItem(key)
@@ -211,14 +207,15 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
     @pyqtSlot(str, str)
     def __onEditItem(self, key, value):
-        if not self.__storage_dirty:
-            self.__repository.dump(path=f"{self.__repository.path}.backup")
-            self.__storage_dirty = True
-
         self.__repository[key] = value
 
-        self.listWidgetExpressions.clear()
-        self.listWidgetExpressions.addItems(self.__repository.keys())
+        current_key = self.listWidgetExpressions.currentItem()
+
+        if key != current_key:
+            self.listWidgetExpressions.clear()
+            self.listWidgetExpressions.addItems(self.__repository.keys())
+        else:
+            self.textEditMeaning.setText(value)
 
         self.setWindowTitle(
             "Boost - {}*".format(reprlib.repr(self.__repository.path)[1:-1])
@@ -246,9 +243,8 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         if not key:
             return
 
-        if not self.__storage_dirty:
-            self.__repository.dump(path=f"{self.__repository.path}.backup")
-            self.__storage_dirty = True
+        if not self.__repository.is_dirty:
+            self.__repository.save(path=f"{self.__repository.path}.backup")
 
         del self.__repository[key]
 
@@ -347,6 +343,8 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
             self.__loadRepository(path)
 
     def closeEvent(self, event):
+        print("REPO: ", self.__repository.is_dirty)
+
         if self.__repository.is_dirty:
             messageBox = QMessageBox()
             messageBox.setIcon(QMessageBox.Question)
