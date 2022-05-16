@@ -1,7 +1,7 @@
 import shutil
 from pathlib import Path
 
-from core.repository.storage import Repository
+from core.repository.repository import Repository
 
 
 def test_if_doesnt_make_backup_on_getitem():

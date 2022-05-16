@@ -4,7 +4,7 @@ from typing import Dict
 from sqlalchemy import asc
 
 from core.repository.models import Event, Record
-from core.repository.storage import Storage
+from core.repository.repository import Storage
 
 
 def _format_event(event: Event) -> Dict:
