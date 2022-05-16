@@ -194,3 +194,12 @@ class Repository:
 
     def items(self):
         return self.main_storage.items()
+
+    def commit_success_event(self, key: str) -> None:
+        self.main_storage.commit_success_event(key=key)
+
+    def commit_failure_event(self, key: str) -> None:
+        self.main_storage.commit_failure_event(key=key)
+
+    def commit_hint_event(self, key: str) -> None:
+        self.main_storage.commit_hint_event(key=key)
