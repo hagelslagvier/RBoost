@@ -104,7 +104,7 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
     @pyqtSlot()
     def __onPushButtonCheckClicked(self):
         key = list(self.repository.keys())[self.index]
-        value = self.repository[key][0]
+        value = self.repository[key]
 
         expression = self.textEditExpression.toPlainText()
         meaning = self.textEditMeaning.toPlainText()
@@ -164,7 +164,7 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
     def makeExpressionQuiz(self):
         keys = list(self.repository.keys())
         key = keys[self.index]
-        value = self.repository[key][0]
+        value = self.repository[key]
 
         self.textEditMeaning.setText(value)
         self.textEditMeaning.setToolTip(mask_text(key, self.hints))
@@ -178,7 +178,7 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
     def makeMeaningQuiz(self):
         keys = list(self.repository.keys())
         key = keys[self.index]
-        value = self.repository[key][0]
+        value = self.repository[key]
 
         self.textEditExpression.setText(key)
         self.textEditExpression.setToolTip(mask_text(value, self.hints))
