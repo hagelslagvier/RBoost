@@ -1,4 +1,3 @@
-import reprlib
 from pathlib import Path
 
 from PyQt5.QtCore import QEvent, QPoint, QSettings, Qt, pyqtSlot
@@ -24,6 +23,7 @@ from gui.quiz_dialog.DialogQuiz import DialogQuiz
 class Boost(QMainWindow, Ui_MainWindowBoost):
     HINTS_index_to_value = {}
     HINTS_index_to_value[0] = 0
+    HINTS_index_to_value[1] = 0.7
     HINTS_index_to_value[1] = 0.7
     HINTS_index_to_value[2] = 0.8
     HINTS_index_to_value[3] = 0.9
@@ -202,7 +202,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         self.listWidgetExpressions.setCurrentItem(QListWidgetItem(key))
 
         self.setWindowTitle(
-            "Boost - {}*".format(reprlib.repr(self.__repository.path)[1:-1])
+            "Boost - {}*".format(self.__repository.path)
         )
 
     @pyqtSlot(str, str)
@@ -218,7 +218,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
             self.textEditMeaning.setText(value)
 
         self.setWindowTitle(
-            "Boost - {}*".format(reprlib.repr(self.__repository.path)[1:-1])
+            "Boost - {}*".format(self.__repository.path)
         )
 
     @pyqtSlot()
@@ -260,7 +260,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
             self.textEditMeaning.clear()
 
         self.setWindowTitle(
-            "Boost - {}*".format(reprlib.repr(self.__repository.path)[1:-1])
+            "Boost - {}*".format(self.__repository.path)
         )
 
     @pyqtSlot()
@@ -271,7 +271,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
             message_box.setWindowTitle("Внимание!")
             message_box.setText(
                 "Файл {} был изменен! Сохранить изменения?".format(
-                    reprlib.repr(self.__repository.path)
+                    self.__repository.path
                 )
             )
 
@@ -291,7 +291,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         self.listWidgetExpressions.clear()
         self.textEditMeaning.clear()
         self.setWindowTitle(
-            "Boost - {}*".format(reprlib.repr(self.__repository.path)[1:-1])
+            "Boost - {}*".format(self.__repository.path)
         )
 
     @pyqtSlot()
@@ -299,7 +299,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         self.__saveRepository()
         self.__saveSettings()
         self.setWindowTitle(
-            "Boost - {}".format(reprlib.repr(self.__repository.path)[1:-1])
+            "Boost - {}".format(self.__repository.path)
         )
 
     @pyqtSlot()
@@ -316,7 +316,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         self.__saveSettings()
 
         self.setWindowTitle(
-            "Boost - {}".format(reprlib.repr(self.__repository.path)[1:-1])
+            "Boost - {}".format(self.__repository.path)
         )
 
     @pyqtSlot()
@@ -327,7 +327,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
             messageBox.setWindowTitle("Внимание!")
             messageBox.setText(
                 "Файл {} был изменен! Сохранить изменения?".format(
-                    reprlib.repr(self.__repository.path)
+                    self.__repository.path
                 )
             )
 
@@ -351,7 +351,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
             messageBox.setWindowTitle("Внимание!")
             messageBox.setText(
                 "Файл {} был изменен! Сохранить изменения?".format(
-                    reprlib.repr(self.__repository.path)
+                    self.__repository.path
                 )
             )
 
@@ -394,7 +394,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
         self.__repository = Repository(path=path)
 
-        self.setWindowTitle("Boost - {}".format(reprlib.repr(path)[1:-1]))
+        self.setWindowTitle("Boost - {}".format(path))
         self.listWidgetExpressions.clear()
         self.textEditMeaning.clear()
 
