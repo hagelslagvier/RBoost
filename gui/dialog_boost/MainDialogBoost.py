@@ -202,9 +202,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         self.listWidgetExpressions.addItem(key)
         self.listWidgetExpressions.setCurrentItem(QListWidgetItem(key))
 
-        self.setWindowTitle(
-            "Boost - {}*".format(self.__repository.path)
-        )
+        self.setWindowTitle("Boost - {}*".format(self.__repository.path))
 
     @pyqtSlot(str, str)
     def __onEditItem(self, key, value):
@@ -218,9 +216,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         else:
             self.textEditMeaning.setText(value)
 
-        self.setWindowTitle(
-            "Boost - {}*".format(self.__repository.path)
-        )
+        self.setWindowTitle("Boost - {}*".format(self.__repository.path))
 
     @pyqtSlot()
     def __onEditItemClicked(self):
@@ -260,9 +256,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         else:
             self.textEditMeaning.clear()
 
-        self.setWindowTitle(
-            "Boost - {}*".format(self.__repository.path)
-        )
+        self.setWindowTitle("Boost - {}*".format(self.__repository.path))
 
     @pyqtSlot()
     def __onActionNewTriggered(self):
@@ -291,17 +285,13 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
         self.listWidgetExpressions.clear()
         self.textEditMeaning.clear()
-        self.setWindowTitle(
-            "Boost - {}*".format(self.__repository.path)
-        )
+        self.setWindowTitle("Boost - {}*".format(self.__repository.path))
 
     @pyqtSlot()
     def __onSaveActionTriggered(self):
         self.__saveRepository()
         self.__saveSettings()
-        self.setWindowTitle(
-            "Boost - {}".format(self.__repository.path)
-        )
+        self.setWindowTitle("Boost - {}".format(self.__repository.path))
 
     @pyqtSlot()
     def __onSaveAsActionTriggered(self):
@@ -316,9 +306,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         self.__saveRepository(path=path)
         self.__saveSettings()
 
-        self.setWindowTitle(
-            "Boost - {}".format(self.__repository.path)
-        )
+        self.setWindowTitle("Boost - {}".format(self.__repository.path))
 
     @pyqtSlot()
     def __onActionOpenTriggered(self):
@@ -344,8 +332,6 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
             self.__loadRepository(path)
 
     def closeEvent(self, event):
-        print("REPO: ", self.__repository.is_dirty)
-
         if self.__repository.is_dirty:
             messageBox = QMessageBox()
             messageBox.setIcon(QMessageBox.Question)
