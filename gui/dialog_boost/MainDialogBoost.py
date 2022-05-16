@@ -431,7 +431,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
             message_box.setIcon(QMessageBox.Critical)
             message_box.setWindowTitle("Ошибка")
             message_box.setText(
-                "Файл {} не найден!".format(reprlib.repr(repository_path))
+                "Файл {} не найден!".format(repository_path)
             )
             message_box.setStandardButtons(QMessageBox.Ok)
             ok_button = message_box.button(QMessageBox.Ok)
