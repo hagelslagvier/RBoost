@@ -52,7 +52,7 @@ class Storage:
     def __len__(self) -> int:
         session = self.session_factory()
 
-        count = session.query(Record).with_entities(func.count()).scalar()
+        count = session.query(func.count(Record.id)).scalar()
 
         return count
 
