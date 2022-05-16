@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Optional
 
 from PyQt5.QtCore import QEvent, QPoint, QSettings, Qt, pyqtSlot
 from PyQt5.QtGui import QIcon, QPixmap
@@ -403,10 +404,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
         self.listWidgetExpressions.setCurrentRow(0)
 
-    def __saveRepository(self, path: str = None):
-        if not path:
-            return
-
+    def __saveRepository(self, path: Optional[str] = None):
         self.__repository.save(path=path)
 
     def __restoreRepository(self):

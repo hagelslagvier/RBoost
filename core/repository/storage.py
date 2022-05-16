@@ -168,7 +168,11 @@ class Repository:
         self.backup_storage = None
         self.is_dirty = False
 
-    def save(self, path: str) -> None:
+    def save(self, path: Optional[str] = None) -> None:
+        if not path:
+            self.is_dirty = False
+            return
+
         destination = Path(path).resolve()
         source = Path(self.main_storage.path).resolve()
 
