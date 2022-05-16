@@ -3,7 +3,7 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile
 from typing import List, Optional
 
-from sqlalchemy import asc, create_engine
+from sqlalchemy import asc, create_engine, func
 from sqlalchemy.orm import sessionmaker
 
 from core.repository.events import EventType
@@ -48,6 +48,12 @@ class Storage:
 
         session.delete(record)
         session.commit()
+
+    def __len__(self):
+        session = self.session_factory()
+
+        count = session.query(Record).with_entities(func.count()).scalar()
+        return count
 
     def _commit_event(self, key: str, event_type: EventType):
         session = self.session_factory()
@@ -133,6 +139,9 @@ class Repository:
     def __del__(self):
         if hasattr(self.backup_storage, "file"):
             self.backup_storage.file.close()
+
+    def __len__(self) -> int:
+        return len(self.main_storage)
 
     @property
     def path(self) -> str:

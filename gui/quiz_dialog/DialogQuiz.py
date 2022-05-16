@@ -80,10 +80,12 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
 
         if 0 == self.order:
             self.index = 0
+
         elif 1 == self.order:
             self.index = len(self.storage) - 1
+
         else:
-            self.index = randint(0, len(self.storage))
+            self.index = randint(0, len(self.storage) - 1)
 
         self.pick()
 
