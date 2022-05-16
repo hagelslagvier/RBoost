@@ -1,7 +1,7 @@
 import shutil
 from pathlib import Path
 from tempfile import NamedTemporaryFile
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from sqlalchemy import asc, create_engine, func
 from sqlalchemy.orm import sessionmaker
@@ -49,13 +49,14 @@ class Storage:
         session.delete(record)
         session.commit()
 
-    def __len__(self):
+    def __len__(self) -> int:
         session = self.session_factory()
 
         count = session.query(Record).with_entities(func.count()).scalar()
+
         return count
 
-    def _commit_event(self, key: str, event_type: EventType):
+    def _commit_event(self, key: str, event_type: EventType) -> None:
         session = self.session_factory()
 
         record = session.query(Record).filter(Record.key == key).one()
@@ -64,13 +65,13 @@ class Storage:
         session.add(event)
         session.commit()
 
-    def commit_success_event(self, key):
+    def commit_success_event(self, key: str) -> None:
         self._commit_event(key=key, event_type=EventType.SUCCESS)
 
-    def commit_failure_event(self, key):
+    def commit_failure_event(self, key: str) -> None:
         self._commit_event(key=key, event_type=EventType.FAILURE)
 
-    def commit_hint_event(self, key):
+    def commit_hint_event(self, key: str) -> None:
         self._commit_event(key=key, event_type=EventType.HINT)
 
     def load(self, path: str) -> None:
@@ -101,14 +102,14 @@ class Storage:
 
         return keys
 
-    def items(self):
+    def items(self) -> List[Tuple[str, str]]:
         session = self.session_factory()
 
         items = [(record.key, record.value) for record in session.query(Record)]
 
         return items
 
-    def clear(self):
+    def clear(self) -> None:
         for key in self.keys():
             self.__delitem__(key=key)
 
@@ -189,10 +190,10 @@ class Repository:
 
         self.main_storage.path = path
 
-    def keys(self):
+    def keys(self) -> List[str]:
         return self.main_storage.keys()
 
-    def items(self):
+    def items(self) -> List[Tuple[str, str]]:
         return self.main_storage.items()
 
     def commit_success_event(self, key: str) -> None:
