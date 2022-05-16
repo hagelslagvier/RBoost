@@ -22,13 +22,13 @@ from gui.quiz_dialog.DialogQuiz import DialogQuiz
 
 
 class Boost(QMainWindow, Ui_MainWindowBoost):
-    HINTS_index_to_value = {}
-    HINTS_index_to_value[0] = 0
-    HINTS_index_to_value[1] = 0.7
-    HINTS_index_to_value[1] = 0.7
-    HINTS_index_to_value[2] = 0.8
-    HINTS_index_to_value[3] = 0.9
-    HINTS_index_to_value[4] = 1
+    HINTS_INDEX_TO_VALUE_MAP = {}
+    HINTS_INDEX_TO_VALUE_MAP[0] = 0
+    HINTS_INDEX_TO_VALUE_MAP[1] = 0.7
+    HINTS_INDEX_TO_VALUE_MAP[1] = 0.7
+    HINTS_INDEX_TO_VALUE_MAP[2] = 0.8
+    HINTS_INDEX_TO_VALUE_MAP[3] = 0.9
+    HINTS_INDEX_TO_VALUE_MAP[4] = 1
 
     def __init__(self):
         QMainWindow.__init__(self)
@@ -116,7 +116,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
     def __mask(self):
         hint_index = self.comboBoxHint.currentIndex()
-        hint_value = Boost.HINTS_index_to_value.get(hint_index, 0)
+        hint_value = Boost.HINTS_INDEX_TO_VALUE_MAP.get(hint_index, 0)
 
         self.listWidgetExpressions.clear()
         for expression in self.__repository.keys():
@@ -141,7 +141,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
     @pyqtSlot()
     def __onStartActionTriggered(self):
         hint_index = self.comboBoxHint.currentIndex()
-        hint_value = Boost.HINTS_index_to_value.get(hint_index, 0)
+        hint_value = Boost.HINTS_INDEX_TO_VALUE_MAP.get(hint_index, 0)
 
         self.__dialogQuiz.hints = hint_value
         self.__dialogQuiz.shuffle = self.comboBoxShuffle.currentIndex()
