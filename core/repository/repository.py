@@ -189,6 +189,7 @@ class Repository:
         shutil.copy(source, destination)
 
         self.main_storage.path = path
+        self.is_dirty = False
 
     def keys(self) -> List[str]:
         return self.main_storage.keys()

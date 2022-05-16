@@ -291,6 +291,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
     def __onSaveActionTriggered(self):
         self.__saveRepository()
         self.__saveSettings()
+
         self.setWindowTitle("Boost - {}".format(self.__repository.path))
 
     @pyqtSlot()
@@ -329,7 +330,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
         path, _ = QFileDialog.getOpenFileName(self, "Открыть...", "", "*.db")
         if path:
-            self.__loadRepository(path)
+            self.__loadRepository(path=path)
 
     def closeEvent(self, event):
         if self.__repository.is_dirty:
@@ -371,7 +372,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
             message_box = QMessageBox()
             message_box.setIcon(QMessageBox.Critical)
             message_box.setWindowTitle("Ошибка!")
-            message_box.setText("Файл {} не найден!".format(reprlib.repr(path)))
+            message_box.setText("Файл {} не найден!".format(path))
             message_box.setStandardButtons(QMessageBox.Ok)
             ok_button = message_box.button(QMessageBox.Ok)
             ok_button.setText("Ok")
@@ -382,6 +383,9 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         self.__repository = Repository(path=path)
 
         self.setWindowTitle("Boost - {}".format(path))
+        self.listWidgetExpressions.clear()
+        self.textEditMeaning.clear()
+
         self.listWidgetExpressions.clear()
         self.textEditMeaning.clear()
 
