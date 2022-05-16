@@ -24,7 +24,7 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
         self.hints = 0
         self.shuffle = 0
         self.order = 0
-        self.storage = None
+        self.repository = None
         self.index = 0
 
         self.timer = QTimer()
@@ -82,10 +82,10 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
             self.index = 0
 
         elif 1 == self.order:
-            self.index = len(self.storage) - 1
+            self.index = len(self.repository) - 1
 
         else:
-            self.index = randint(0, len(self.storage) - 1)
+            self.index = randint(0, len(self.repository) - 1)
 
         self.pick()
 
@@ -103,18 +103,18 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
 
     @pyqtSlot()
     def __onPushButtonCheckClicked(self):
-        key = list(self.storage.keys())[self.index]
-        value = self.storage[key][0]
+        key = list(self.repository.keys())[self.index]
+        value = self.repository[key][0]
 
         expression = self.textEditExpression.toPlainText()
         meaning = self.textEditMeaning.toPlainText()
 
         if compare(key, expression) >= 95 and compare(value, meaning) >= 99:
             self.flashGreen()
-            self.storage.commit_success_event(key=key)
+            self.repository.commit_success_event(key=key)
         else:
             self.flashRed()
-            self.storage.commit_failure_event(key=key)
+            self.repository.commit_failure_event(key=key)
 
             correct_answer = ""
             user_answer = ""
@@ -138,8 +138,8 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
 
     @pyqtSlot()
     def __onPushButtonHintClicked(self):
-        key = list(self.storage.keys())[self.index]
-        self.storage.commit_hint_event(key=key)
+        key = list(self.repository.keys())[self.index]
+        self.repository.commit_hint_event(key=key)
         self.flashYellow()
 
         self.next()
@@ -162,9 +162,9 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
         print("Mouse released")
 
     def makeExpressionQuiz(self):
-        keys = list(self.storage.keys())
+        keys = list(self.repository.keys())
         key = keys[self.index]
-        value = self.storage[key][0]
+        value = self.repository[key][0]
 
         self.textEditMeaning.setText(value)
         self.textEditMeaning.setToolTip(mask_text(key, self.hints))
@@ -176,9 +176,9 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
         self.textEditExpression.setFocus()
 
     def makeMeaningQuiz(self):
-        keys = list(self.storage.keys())
+        keys = list(self.repository.keys())
         key = keys[self.index]
-        value = self.storage[key][0]
+        value = self.repository[key][0]
 
         self.textEditExpression.setText(key)
         self.textEditExpression.setToolTip(mask_text(value, self.hints))
@@ -201,7 +201,7 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
                 self.makeMeaningQuiz()
 
     def next(self):
-        count = len(self.storage)
+        count = len(self.repository)
 
         if 0 == self.order:
             self.index += 1
@@ -211,7 +211,7 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
         elif 1 == self.order:
             self.index -= 1
             if self.index < 0:
-                self.index = len(self.storage) - 1
+                self.index = len(self.repository) - 1
         else:
             self.index = randint(0, count - 1)
 

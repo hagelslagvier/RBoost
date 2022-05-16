@@ -146,7 +146,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         self.__dialogQuiz.hints = hint_value
         self.__dialogQuiz.shuffle = self.comboBoxShuffle.currentIndex()
         self.__dialogQuiz.order = self.comboBoxOrder.currentIndex()
-        self.__dialogQuiz.storage = self.__repository
+        self.__dialogQuiz.repository = self.__repository
         self.__dialogQuiz.show()
 
     @pyqtSlot()
