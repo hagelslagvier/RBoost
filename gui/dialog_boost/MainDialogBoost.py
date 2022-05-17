@@ -217,7 +217,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         self.listWidgetExpressions.insertItem(current_row, new_key)
         self.listWidgetExpressions.setCurrentRow(current_row)
         self.textEditMeaning.setText(new_value)
-        
+
         self.setWindowTitle("Boost - {}*".format(self.__repository.path))
 
     @pyqtSlot()
@@ -263,7 +263,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
     @pyqtSlot()
     def __onActionNewTriggered(self):
         if self.__repository.is_dirty:
-            message_box = QMessageBox()
+            message_box = QMessageBox(parent=self)
             message_box.setIcon(QMessageBox.Question)
             message_box.setWindowTitle("Внимание!")
             message_box.setText(
@@ -336,20 +336,20 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
     def closeEvent(self, event):
         if self.__repository.is_dirty:
-            messageBox = QMessageBox()
-            messageBox.setIcon(QMessageBox.Question)
-            messageBox.setWindowTitle("Внимание!")
-            messageBox.setText(
+            message_box = QMessageBox(parent=self)
+            message_box.setIcon(QMessageBox.Question)
+            message_box.setWindowTitle("Внимание!")
+            message_box.setText(
                 "Файл {} был изменен! Сохранить изменения?".format(
                     self.__repository.path
                 )
             )
 
-            okButton = messageBox.addButton("Ok", QMessageBox.ActionRole)
-            cancelButton = messageBox.addButton("Отмена", QMessageBox.ActionRole)
+            ok_button = message_box.addButton("Ok", QMessageBox.ActionRole)
+            cancel_button = message_box.addButton("Отмена", QMessageBox.ActionRole)
 
-            messageBox.exec()
-            if messageBox.clickedButton() == okButton:
+            message_box.exec_()
+            if message_box.clickedButton() == ok_button:
                 self.__saveRepository()
 
         self.__saveSettings()
