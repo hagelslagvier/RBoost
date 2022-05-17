@@ -205,23 +205,25 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         self.setWindowTitle("Boost - {}*".format(self.__repository.path))
 
     @pyqtSlot(str, str)
-    def __onEditItem(self, key, value):
-        self.__repository[key] = value
+    def __onEditItem(self, new_key: str, new_value: str) -> None:
+        current_row = self.listWidgetExpressions.currentRow()
+        current_item = self.listWidgetExpressions.currentItem()
+        current_key = current_item.text()
+        self.listWidgetExpressions.takeItem(current_row)
 
-        current_key = self.listWidgetExpressions.currentItem()
+        del self.__repository[current_key]
+        self.__repository[new_key] = new_value
 
-        if key != current_key:
-            self.listWidgetExpressions.clear()
-            self.listWidgetExpressions.addItems(self.__repository.keys())
-        else:
-            self.textEditMeaning.setText(value)
-
+        self.listWidgetExpressions.insertItem(current_row, new_key)
+        self.listWidgetExpressions.setCurrentRow(current_row)
+        self.textEditMeaning.setText(new_value)
+        
         self.setWindowTitle("Boost - {}*".format(self.__repository.path))
 
     @pyqtSlot()
     def __onEditItemClicked(self):
-        currentRow = self.listWidgetExpressions.currentRow()
-        key = self.listWidgetExpressions.item(currentRow).text()
+        current_row = self.listWidgetExpressions.currentRow()
+        key = self.listWidgetExpressions.item(current_row).text()
         value = self.__repository[key]
 
         self.__dialogItemEdit.setExpression(key)
