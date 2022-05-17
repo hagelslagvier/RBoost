@@ -335,15 +335,24 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
             self.__loadRepository(path=path)
 
     def closeEvent(self, event):
+        path = self.__repository.path
+        if len(path) > 60:
+            parts = Path(self.__repository.path).parts
+            parts_count = len(parts)
+            if parts_count > 2:
+                offset = 2
+            elif parts_count > 3:
+                offset = 3
+            else:
+                offset = 4
+
+            path = ".../" + "/".join(Path(self.__repository.path).parts[-offset:])
+
         if self.__repository.is_dirty:
             message_box = QMessageBox(parent=self)
             message_box.setIcon(QMessageBox.Question)
             message_box.setWindowTitle("Внимание!")
-            message_box.setText(
-                "Файл {} был изменен! Сохранить изменения?".format(
-                    self.__repository.path
-                )
-            )
+            message_box.setText(f"Файл <b>{path}</b> был изменен! Сохранить изменения?")
 
             ok_button = message_box.addButton("Ok", QMessageBox.ActionRole)
             cancel_button = message_box.addButton("Отмена", QMessageBox.ActionRole)
@@ -432,9 +441,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
             message_box = QMessageBox()
             message_box.setIcon(QMessageBox.Critical)
             message_box.setWindowTitle("Ошибка")
-            message_box.setText(
-                "Файл {} не найден!".format(repository_path)
-            )
+            message_box.setText("Файл {} не найден!".format(repository_path))
             message_box.setStandardButtons(QMessageBox.Ok)
             ok_button = message_box.button(QMessageBox.Ok)
             ok_button.setText("Ok")
