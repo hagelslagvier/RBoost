@@ -314,20 +314,20 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
     @pyqtSlot()
     def __onActionOpenTriggered(self):
         if self.__repository.backup_path:
-            messageBox = QMessageBox()
-            messageBox.setIcon(QMessageBox.Question)
-            messageBox.setWindowTitle("Внимание!")
-            messageBox.setText(
+            message_box = QMessageBox()
+            message_box.setIcon(QMessageBox.Question)
+            message_box.setWindowTitle("Внимание!")
+            message_box.setText(
                 "Файл {} был изменен! Сохранить изменения?".format(
                     self.__repository.path
                 )
             )
 
-            okButton = messageBox.addButton("Ok", QMessageBox.ActionRole)
-            cancelButton = messageBox.addButton("Отмена", QMessageBox.ActionRole)
+            ok_button = message_box.addButton("Ok", QMessageBox.ActionRole)
+            cancel_button = message_box.addButton("Отмена", QMessageBox.ActionRole)
 
-            messageBox.exec()
-            if messageBox.clickedButton() == okButton:
+            message_box.exec()
+            if message_box.clickedButton() == ok_button:
                 self.__saveRepository()
 
         path, _ = QFileDialog.getOpenFileName(self, "Открыть...", "", "*.db")
