@@ -281,6 +281,9 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
         home_directory = Path(__file__).resolve().parents[2]
         default_path = home_directory / "dictionaries/new.db"
+
+        Path(default_path).unlink(missing_ok=True)
+
         self.repository = Repository(path=str(default_path))
 
         self.listWidgetExpressions.clear()
