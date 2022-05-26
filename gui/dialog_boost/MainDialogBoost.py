@@ -252,6 +252,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
             previous_row = row - 1 if row > 0 else 0
             self.listWidgetExpressions.setCurrentRow(previous_row)
+
         else:
             self.textEditMeaning.clear()
 
