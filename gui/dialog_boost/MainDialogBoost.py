@@ -34,25 +34,25 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         QMainWindow.__init__(self)
         self.setupUi(self)
 
-        self.__customize()
-        self.__loadSettings()
+        self.customize()
+        self.loadSettings()
 
-    def __customize(self):
-        self.__createChildWidgets()
-        self.__createContextMenus()
-        self.__connectSignalsToSlots()
-        self.__installEventFilters()
-        self.__centerOnScreen()
+    def customize(self):
+        self.createChildWidgets()
+        self.createContextMenus()
+        self.connectSignalsToSlots()
+        self.installEventFilters()
+        self.centerOnScreen()
 
-    def __createChildWidgets(self):
-        self.__dialogItemAdd = DialogItemAdd(self)
-        self.__dialogItemEdit = DialogItemEdit(self)
-        self.__dialogQuiz = DialogQuiz(self)
+    def createChildWidgets(self):
+        self.dialogItemAdd = DialogItemAdd(self)
+        self.dialogItemEdit = DialogItemEdit(self)
+        self.dialogQuiz = DialogQuiz(self)
 
-    def __createContextMenus(self):
+    def createContextMenus(self):
         self.listWidgetExpressions.setContextMenuPolicy(Qt.CustomContextMenu)
         self.listWidgetExpressions.customContextMenuRequested.connect(
-            self.__onListWidgetExpressionsContextMenuRequested
+            self.onListWidgetExpressionsContextMenuRequested
         )
 
         self.menuExpressionsPopup = QMenu(self)
@@ -75,165 +75,165 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
             iconDelete, "Удалить", self.menuExpressionsPopup
         )
 
-        actionAddExpression.triggered.connect(self.__onAddItemClicked)
-        actionEditExpression.triggered.connect(self.__onEditItemClicked)
-        actionDeleteExpression.triggered.connect(self.__onDeleteItemClicked)
+        actionAddExpression.triggered.connect(self.onAddItemClicked)
+        actionEditExpression.triggered.connect(self.onEditItemClicked)
+        actionDeleteExpression.triggered.connect(self.onDeleteItemClicked)
 
         self.menuExpressionsPopup.addAction(actionAddExpression)
         self.menuExpressionsPopup.addAction(actionEditExpression)
         self.menuExpressionsPopup.addAction(actionDeleteExpression)
 
-    def __connectSignalsToSlots(self):
-        self.pushButtonAddItem.clicked.connect(self.__onAddItemClicked)
-        self.pushButtonEditItem.clicked.connect(self.__onEditItemClicked)
-        self.pushButtonDeleteItem.clicked.connect(self.__onDeleteItemClicked)
+    def connectSignalsToSlots(self):
+        self.pushButtonAddItem.clicked.connect(self.onAddItemClicked)
+        self.pushButtonEditItem.clicked.connect(self.onEditItemClicked)
+        self.pushButtonDeleteItem.clicked.connect(self.onDeleteItemClicked)
 
-        self.listWidgetExpressions.currentRowChanged.connect(self.__onCurrentRowChanged)
-        self.listWidgetExpressions.itemDoubleClicked.connect(self.__onItemDoubleClicked)
+        self.listWidgetExpressions.currentRowChanged.connect(self.onCurrentRowChanged)
+        self.listWidgetExpressions.itemDoubleClicked.connect(self.onItemDoubleClicked)
 
-        self.__dialogItemAdd.emitItem.connect(self.__onAddItem)
-        self.__dialogItemEdit.emitItem.connect(self.__onEditItem)
+        self.dialogItemAdd.emitItem.connect(self.onAddItem)
+        self.dialogItemEdit.emitItem.connect(self.onEditItem)
 
-        self.__dialogQuiz.onDialogShown.connect(self.__onQuizDialogShown)
-        self.__dialogQuiz.onDialogHidden.connect(self.__onQuizDialogHidden)
+        self.dialogQuiz.onDialogShown.connect(self.onQuizDialogShown)
+        self.dialogQuiz.onDialogHidden.connect(self.onQuizDialogHidden)
 
-        self.actionNew.triggered.connect(self.__onActionNewTriggered)
-        self.actionSave.triggered.connect(self.__onSaveActionTriggered)
-        self.actionSaveAs.triggered.connect(self.__onSaveAsActionTriggered)
-        self.actionOpen.triggered.connect(self.__onActionOpenTriggered)
+        self.actionNew.triggered.connect(self.onActionNewTriggered)
+        self.actionSave.triggered.connect(self.onSaveActionTriggered)
+        self.actionSaveAs.triggered.connect(self.onSaveAsActionTriggered)
+        self.actionOpen.triggered.connect(self.onActionOpenTriggered)
 
-        self.actionStart.triggered.connect(self.__onStartActionTriggered)
-        self.actionExit.triggered.connect(self.__onActionExitTriggered)
+        self.actionStart.triggered.connect(self.onStartActionTriggered)
+        self.actionExit.triggered.connect(self.onActionExitTriggered)
 
-    def __installEventFilters(self):
+    def installEventFilters(self):
         self.listWidgetExpressions.viewport().installEventFilter(self)
 
-    def __centerOnScreen(self):
+    def centerOnScreen(self):
         resolution = QDesktopWidget().screenGeometry()
         x = (resolution.width() / 2) - (self.frameSize().width() / 2)
         y = (resolution.height() / 2) - (self.frameSize().height() / 2)
         self.move(x, y)
 
-    def __mask(self):
+    def maskContent(self):
         hint_index = self.comboBoxHint.currentIndex()
         hint_value = Boost.HINTS_INDEX_TO_VALUE_MAP.get(hint_index, 0)
 
         self.listWidgetExpressions.clear()
-        for expression in self.__repository.keys():
+        for expression in self.repository.keys():
             self.listWidgetExpressions.addItem(mask_text(expression, hint_value))
 
         meaning = self.textEditMeaning.toPlainText()
         meaning = mask_text(meaning, hint_value)
         self.textEditMeaning.setText(meaning)
 
-    def __unmask(self):
+    def unmaskContent(self):
         self.listWidgetExpressions.clear()
 
-        keys = self.__repository.keys()
+        keys = self.repository.keys()
         for key in keys:
             self.listWidgetExpressions.addItem(key)
 
         first_key = keys[0]
         self.listWidgetExpressions.setCurrentRow(0)
-        meaning = self.__repository[first_key]
+        meaning = self.repository[first_key]
         self.textEditMeaning.setText(meaning)
 
     @pyqtSlot()
-    def __onStartActionTriggered(self):
+    def onStartActionTriggered(self):
         hint_index = self.comboBoxHint.currentIndex()
         hint_value = Boost.HINTS_INDEX_TO_VALUE_MAP.get(hint_index, 0)
 
-        self.__dialogQuiz.hints = hint_value
-        self.__dialogQuiz.shuffle = self.comboBoxShuffle.currentIndex()
-        self.__dialogQuiz.order = self.comboBoxOrder.currentIndex()
-        self.__dialogQuiz.repository = self.__repository
-        self.__dialogQuiz.show()
+        self.dialogQuiz.hints = hint_value
+        self.dialogQuiz.shuffle = self.comboBoxShuffle.currentIndex()
+        self.dialogQuiz.order = self.comboBoxOrder.currentIndex()
+        self.dialogQuiz.repository = self.repository
+        self.dialogQuiz.show()
 
     @pyqtSlot()
-    def __onActionExitTriggered(self):
+    def onActionExitTriggered(self):
         self.close()
 
     @pyqtSlot()
-    def __onQuizDialogShown(self):
-        self.__mask()
+    def onQuizDialogShown(self):
+        self.maskContent()
 
     @pyqtSlot()
-    def __onQuizDialogHidden(self):
-        self.__unmask()
+    def onQuizDialogHidden(self):
+        self.unmaskContent()
 
     @pyqtSlot(int)
-    def __onCurrentRowChanged(self, currentRow):
+    def onCurrentRowChanged(self, currentRow):
         if -1 == currentRow:
             return
 
         row = self.listWidgetExpressions.item(currentRow)
 
         key = row.text()
-        value = self.__repository[key]
+        value = self.repository[key]
 
         self.textEditMeaning.setText(value)
 
     @pyqtSlot(QListWidgetItem)
-    def __onItemDoubleClicked(self, item):
+    def onItemDoubleClicked(self, item):
         expression = item.text()
-        meaning = self.__repository[expression]
+        meaning = self.repository[expression]
 
-        self.__dialogItemEdit.setExpression(expression)
-        self.__dialogItemEdit.setMeaning(meaning)
-        self.__dialogItemEdit.show()
+        self.dialogItemEdit.setExpression(expression)
+        self.dialogItemEdit.setMeaning(meaning)
+        self.dialogItemEdit.show()
 
     @pyqtSlot(QPoint)
-    def __onListWidgetExpressionsContextMenuRequested(self, point):
+    def onListWidgetExpressionsContextMenuRequested(self, point):
         self.menuExpressionsPopup.popup(
             self.listWidgetExpressions.viewport().mapToGlobal(point)
         )
 
     @pyqtSlot()
-    def __onAddItemClicked(self):
-        self.__dialogItemAdd.show()
+    def onAddItemClicked(self):
+        self.dialogItemAdd.show()
 
     @pyqtSlot(str, str)
-    def __onAddItem(self, key, value):
-        if key in self.__repository.keys():
+    def onAddItem(self, key, value):
+        if key in self.repository.keys():
             return
 
-        self.__repository[key] = value
+        self.repository[key] = value
 
         self.listWidgetExpressions.addItem(key)
         self.listWidgetExpressions.setCurrentItem(QListWidgetItem(key))
 
-        self.setWindowTitle("Boost - {}*".format(self.__repository.path))
+        self.setWindowTitle("Boost - {}*".format(self.repository.path))
 
     @pyqtSlot(str, str)
-    def __onEditItem(self, new_key: str, new_value: str) -> None:
+    def onEditItem(self, new_key: str, new_value: str) -> None:
         current_row = self.listWidgetExpressions.currentRow()
         current_item = self.listWidgetExpressions.currentItem()
         current_key = current_item.text()
         self.listWidgetExpressions.takeItem(current_row)
 
-        del self.__repository[current_key]
-        self.__repository[new_key] = new_value
+        del self.repository[current_key]
+        self.repository[new_key] = new_value
 
         self.listWidgetExpressions.insertItem(current_row, new_key)
         self.listWidgetExpressions.setCurrentRow(current_row)
         self.textEditMeaning.setText(new_value)
 
-        self.setWindowTitle("Boost - {}*".format(self.__repository.path))
+        self.setWindowTitle("Boost - {}*".format(self.repository.path))
 
     @pyqtSlot()
-    def __onEditItemClicked(self):
+    def onEditItemClicked(self):
         current_row = self.listWidgetExpressions.currentRow()
         key = self.listWidgetExpressions.item(current_row).text()
-        value = self.__repository[key]
+        value = self.repository[key]
 
-        self.__dialogItemEdit.setExpression(key)
-        self.__dialogItemEdit.setMeaning(value)
+        self.dialogItemEdit.setExpression(key)
+        self.dialogItemEdit.setMeaning(value)
 
-        self.__dialogItemEdit.pushButtonOk.setText("Изменить")
-        self.__dialogItemEdit.show()
+        self.dialogItemEdit.pushButtonOk.setText("Изменить")
+        self.dialogItemEdit.show()
 
     @pyqtSlot()
-    def __onDeleteItemClicked(self):
+    def onDeleteItemClicked(self):
         row = self.listWidgetExpressions.currentRow()
         if -1 == row:
             return
@@ -242,13 +242,13 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         if not key:
             return
 
-        del self.__repository[key]
+        del self.repository[key]
 
         self.listWidgetExpressions.clear()
 
-        expressions = self.__repository.keys()
+        expressions = self.repository.keys()
         if expressions:
-            self.listWidgetExpressions.addItems(self.__repository.keys())
+            self.listWidgetExpressions.addItems(self.repository.keys())
 
             previous_row = row - 1 if row > 0 else 0
             self.listWidgetExpressions.setCurrentRow(previous_row)
@@ -256,17 +256,17 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         else:
             self.textEditMeaning.clear()
 
-        self.setWindowTitle("Boost - {}*".format(self.__repository.path))
+        self.setWindowTitle("Boost - {}*".format(self.repository.path))
 
     @pyqtSlot()
-    def __onActionNewTriggered(self):
-        if self.__repository.backup_path:
+    def onActionNewTriggered(self):
+        if self.repository.backup_path:
             message_box = QMessageBox(parent=self)
             message_box.setIcon(QMessageBox.Question)
             message_box.setWindowTitle("Внимание!")
             message_box.setText(
                 "Файл {} был изменен! Сохранить изменения?".format(
-                    self.__repository.path
+                    self.repository.path
                 )
             )
 
@@ -275,27 +275,27 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
             message_box.exec()
             if message_box.clickedButton() == ok_button:
-                self.__saveRepository()
+                self.saveRepository()
             else:
-                self.__restoreRepository()
+                self.restoreRepository()
 
         home_directory = Path(__file__).resolve().parents[2]
         default_path = home_directory / "dictionaries/new.db"
-        self.__repository = Repository(path=str(default_path))
+        self.repository = Repository(path=str(default_path))
 
         self.listWidgetExpressions.clear()
         self.textEditMeaning.clear()
-        self.setWindowTitle("Boost - {}*".format(self.__repository.path))
+        self.setWindowTitle("Boost - {}*".format(self.repository.path))
 
     @pyqtSlot()
-    def __onSaveActionTriggered(self):
-        self.__saveRepository()
-        self.__saveSettings()
+    def onSaveActionTriggered(self):
+        self.saveRepository()
+        self.saveSettings()
 
-        self.setWindowTitle("Boost - {}".format(self.__repository.path))
+        self.setWindowTitle("Boost - {}".format(self.repository.path))
 
     @pyqtSlot()
-    def __onSaveAsActionTriggered(self):
+    def onSaveAsActionTriggered(self):
         path, _ = QFileDialog.getSaveFileName(self, "Сохранить как...", "", "*.db")
 
         if not path:
@@ -304,20 +304,20 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         if not str(path).endswith(".db"):
             path += ".db"
 
-        self.__saveRepository(path=path)
-        self.__saveSettings()
+        self.saveRepository(path=path)
+        self.saveSettings()
 
-        self.setWindowTitle("Boost - {}".format(self.__repository.path))
+        self.setWindowTitle("Boost - {}".format(self.repository.path))
 
     @pyqtSlot()
-    def __onActionOpenTriggered(self):
-        if self.__repository.backup_path:
+    def onActionOpenTriggered(self):
+        if self.repository.backup_path:
             message_box = QMessageBox()
             message_box.setIcon(QMessageBox.Question)
             message_box.setWindowTitle("Внимание!")
             message_box.setText(
                 "Файл {} был изменен! Сохранить изменения?".format(
-                    self.__repository.path
+                    self.repository.path
                 )
             )
 
@@ -326,16 +326,16 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
             message_box.exec()
             if message_box.clickedButton() == ok_button:
-                self.__saveRepository()
+                self.saveRepository()
 
         path, _ = QFileDialog.getOpenFileName(self, "Открыть...", "", "*.db")
         if path:
-            self.__loadRepository(path=path)
+            self.loadRepository(path=path)
 
     def closeEvent(self, event):
-        path = self.__repository.path
+        path = self.repository.path
         if len(path) > 60:
-            parts = Path(self.__repository.path).parts
+            parts = Path(self.repository.path).parts
             parts_count = len(parts)
             if parts_count > 2:
                 offset = 2
@@ -344,9 +344,9 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
             else:
                 offset = 4
 
-            path = ".../" + "/".join(Path(self.__repository.path).parts[-offset:])
+            path = ".../" + "/".join(Path(self.repository.path).parts[-offset:])
 
-        if self.__repository.backup_path:
+        if self.repository.backup_path:
             message_box = QMessageBox(parent=self)
             message_box.setIcon(QMessageBox.Question)
             message_box.setWindowTitle("Внимание!")
@@ -357,9 +357,9 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
             message_box.exec_()
             if message_box.clickedButton() == ok_button:
-                self.__saveRepository()
+                self.saveRepository()
 
-        self.__saveSettings()
+        self.saveSettings()
 
     def eventFilter(self, object, event):
         if event.type() == QEvent.MouseButtonDblClick:
@@ -370,13 +370,13 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
             if item_clicked:
                 return QMainWindow.eventFilter(self, object, event)
 
-            self.__dialogItemAdd.show()
+            self.dialogItemAdd.show()
 
             return True
 
         return QMainWindow.eventFilter(self, object, event)
 
-    def __loadRepository(self, path: str):
+    def loadRepository(self, path: str):
         if not Path(path).is_file():
             message_box = QMessageBox()
             message_box.setIcon(QMessageBox.Critical)
@@ -389,7 +389,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
             return
 
-        self.__repository = Repository(path=path)
+        self.repository = Repository(path=path)
 
         self.setWindowTitle("Boost - {}".format(path))
         self.listWidgetExpressions.clear()
@@ -398,22 +398,22 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         self.listWidgetExpressions.clear()
         self.textEditMeaning.clear()
 
-        for key in self.__repository.keys():
+        for key in self.repository.keys():
             self.listWidgetExpressions.addItem(key)
 
         self.listWidgetExpressions.setCurrentRow(0)
 
-    def __saveRepository(self, path: Optional[str] = None):
-        self.__repository.save(path=path)
+    def saveRepository(self, path: Optional[str] = None):
+        self.repository.save(path=path)
 
-    def __restoreRepository(self):
-        self.__repository.restore()
+    def restoreRepository(self):
+        self.repository.restore()
 
-    def __createDefaultRepository(self, path: str):
+    def createDefaultRepository(self, path: str):
         default_repository = Repository(path=path)
         default_repository["hello"] = "used to greet someone"
 
-    def __loadSettings(self):
+    def loadSettings(self):
         settings = QSettings("RocketLabs", "Boost")
 
         hint_index = settings.value("comboBoxHint_currentIndex", 0, type=int)
@@ -432,8 +432,8 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
             Path(default_path).unlink(missing_ok=True)
 
-            self.__createDefaultRepository(path=str(default_path))
-            self.__loadRepository(path=str(default_path))
+            self.createDefaultRepository(path=str(default_path))
+            self.loadRepository(path=str(default_path))
 
         elif not Path(repository_path).is_file():
             message_box = QMessageBox()
@@ -448,13 +448,13 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
             home_directory = Path(__file__).resolve().parents[2]
             default_path = home_directory / "dictionaries/hello.db"
 
-            self.__createDefaultRepository(path=str(default_path))
-            self.__loadRepository(path=str(default_path))
+            self.createDefaultRepository(path=str(default_path))
+            self.loadRepository(path=str(default_path))
 
         else:
-            self.__loadRepository(path=str(repository_path))
+            self.loadRepository(path=str(repository_path))
 
-    def __saveSettings(self):
+    def saveSettings(self):
         settings = QSettings("RocketLabs", "Boost")
         settings.setValue("comboBoxHint_currentIndex", self.comboBoxHint.currentIndex())
         settings.setValue(
@@ -463,4 +463,4 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         settings.setValue(
             "comboboxOrder_currentIndex", self.comboBoxOrder.currentIndex()
         )
-        settings.setValue("repositoryPath", str(self.__repository.path))
+        settings.setValue("repositoryPath", str(self.repository.path))
