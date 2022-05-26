@@ -242,9 +242,6 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         if not key:
             return
 
-        if not self.__repository.backup_path:
-            self.__repository.save(path=f"{self.__repository.path}.backup")
-
         del self.__repository[key]
 
         self.listWidgetExpressions.clear()
