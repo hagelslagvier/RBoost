@@ -173,6 +173,7 @@ class Repository:
 
     def save(self, path: Optional[str] = None) -> None:
         if not path:
+            self.backup_path = None
             return
 
         destination = Path(path).resolve()
