@@ -1,7 +1,7 @@
 import shutil
 from pathlib import Path
 
-from core.repository.repository import Repository
+from core.repository.repository import Repository, Storage
 
 
 def test_if_doesnt_make_backup_on_getitem():
@@ -10,13 +10,11 @@ def test_if_doesnt_make_backup_on_getitem():
 
     repository = Repository(path=str(Path(original).resolve()))
 
-    assert repository.is_dirty is False
-    assert repository.backup_storage is None
+    assert repository.backup_path is None
 
     assert repository["foo"] == "1"
     assert repository["bar"] == "2"
-    assert repository.is_dirty is False
-    assert repository.backup_storage is None
+    assert repository.backup_path is None
 
 
 def test_if_can_backup_and_restore_on_setitem():
@@ -30,27 +28,27 @@ def test_if_can_backup_and_restore_on_setitem():
 
     assert repository["foo"] == "1"
     assert repository["bar"] == "2"
-    assert repository.is_dirty is False
-    assert repository.backup_storage is None
-    assert repository.main_storage.keys() == ["foo", "bar"]
-    assert repository.main_storage.items() == [("foo", "1"), ("bar", "2")]
+    assert repository.backup_path is None
+    assert repository.storage.keys() == ["foo", "bar"]
+    assert repository.storage.items() == [("foo", "1"), ("bar", "2")]
 
     repository["baz"] = "3"
 
     assert repository["baz"] == "3"
-    assert repository.is_dirty is True
-    assert repository.backup_storage is not None
-    assert repository.backup_storage.keys() == ["foo", "bar"]
-    assert repository.backup_storage.items() == [("foo", "1"), ("bar", "2")]
-    assert repository.main_storage.keys() == ["foo", "bar", "baz"]
-    assert repository.main_storage.items() == [("foo", "1"), ("bar", "2"), ("baz", "3")]
+    assert repository.backup_path is not None
+
+    backup_storage = Storage(path=repository.backup_path)
+
+    assert backup_storage.keys() == ["foo", "bar"]
+    assert backup_storage.items() == [("foo", "1"), ("bar", "2")]
+    assert repository.storage.keys() == ["foo", "bar", "baz"]
+    assert repository.storage.items() == [("foo", "1"), ("bar", "2"), ("baz", "3")]
 
     repository.restore()
 
-    assert repository.is_dirty is False
-    assert repository.backup_storage is None
-    assert repository.main_storage.keys() == ["foo", "bar"]
-    assert repository.main_storage.items() == [("foo", "1"), ("bar", "2")]
+    assert repository.backup_path is None
+    assert repository.storage.keys() == ["foo", "bar"]
+    assert repository.storage.items() == [("foo", "1"), ("bar", "2")]
 
     copied.unlink(missing_ok=True)
 
@@ -66,25 +64,25 @@ def test_if_can_backup_and_restore_on_delitem():
 
     assert repository["foo"] == "1"
     assert repository["bar"] == "2"
-    assert repository.is_dirty is False
-    assert repository.backup_storage is None
-    assert repository.main_storage.keys() == ["foo", "bar"]
-    assert repository.main_storage.items() == [("foo", "1"), ("bar", "2")]
+    assert repository.backup_path is None
+    assert repository.storage.keys() == ["foo", "bar"]
+    assert repository.storage.items() == [("foo", "1"), ("bar", "2")]
 
     del repository["bar"]
 
-    assert repository.is_dirty is True
-    assert repository.backup_storage is not None
-    assert repository.backup_storage.keys() == ["foo", "bar"]
-    assert repository.backup_storage.items() == [("foo", "1"), ("bar", "2")]
-    assert repository.main_storage.keys() == ["foo"]
-    assert repository.main_storage.items() == [("foo", "1")]
+    assert repository.backup_path is not None
+
+    backup_storage = Storage(path=repository.backup_path)
+
+    assert backup_storage.keys() == ["foo", "bar"]
+    assert backup_storage.items() == [("foo", "1"), ("bar", "2")]
+    assert repository.storage.keys() == ["foo"]
+    assert repository.storage.items() == [("foo", "1")]
 
     repository.restore()
 
-    assert repository.is_dirty is False
-    assert repository.backup_storage is None
-    assert repository.main_storage.keys() == ["foo", "bar"]
-    assert repository.main_storage.items() == [("foo", "1"), ("bar", "2")]
+    assert repository.backup_path is None
+    assert repository.storage.keys() == ["foo", "bar"]
+    assert repository.storage.items() == [("foo", "1"), ("bar", "2")]
 
     copied.unlink(missing_ok=True)

@@ -88,16 +88,17 @@ class Storage:
 
         DeclarativeBase.metadata.create_all(bind=engine)
 
-        storage = Storage(path=path)
-
+        backup_storage = Storage(path=path)
         for key, value in self.items():
-            storage[key] = value
+            backup_storage[key] = value
 
     def keys(self) -> List[str]:
         session = self.session_factory()
 
         keys = []
-        for record in session.query(Record).order_by(asc(Record.id)):
+        for record in session.query(Record).order_by(
+            asc(Record.id)
+        ):  # TODO: retrieve id only
             keys.append(record.key)
 
         return keys
@@ -105,7 +106,9 @@ class Storage:
     def items(self) -> List[Tuple[str, str]]:
         session = self.session_factory()
 
-        items = [(record.key, record.value) for record in session.query(Record)]
+        items = [
+            (record.key, record.value) for record in session.query(Record)
+        ]  # TODO: (1) retrieve key and value only, (2) add order_by
 
         return items
 
@@ -116,92 +119,80 @@ class Storage:
 
 class Repository:
     def __init__(self, path: str):
-        self.main_storage: Storage = Storage(path=path)
-        self.backup_storage: Optional[Storage] = None
-        self.is_dirty: bool = False
+        self.storage: Storage = Storage(path=path)
+        self.backup_path = None
 
     def __getitem__(self, key: str) -> Optional[str]:
-        value = self.main_storage[key]
+        value = self.storage[key]
 
         return value
 
     def __setitem__(self, key: str, value: str) -> None:
-        self.is_dirty = True
-        self.backup()
+        if not self.backup_path:
+            self.backup()
 
-        self.main_storage[key] = value
+        self.storage[key] = value
 
     def __delitem__(self, key: str) -> None:
-        self.is_dirty = True
-        self.backup()
+        if not self.backup_path:
+            self.backup()
 
-        del self.main_storage[key]
-
-    def __del__(self):
-        if hasattr(self.backup_storage, "file"):
-            self.backup_storage.file.close()
+        del self.storage[key]
 
     def __len__(self) -> int:
-        return len(self.main_storage)
+        return len(self.storage)
 
     @property
     def path(self) -> str:
-        return self.main_storage.path
+        return self.storage.path
 
     def backup(self) -> None:
-        if not self.is_dirty:
-            return
+        backup_file = NamedTemporaryFile("w+")
+        backup_path = backup_file.name
+        backup_file.close()
 
-        if not self.backup_storage:
-            file = NamedTemporaryFile("w+")
-            self.backup_storage = Storage(path=file.name)
-            self.backup_storage.file = file
-
-        for k, v in self.main_storage.items():
-            self.backup_storage[k] = v
+        self.backup_path = backup_path
+        self.storage.dump(path=self.backup_path)
 
     def restore(self) -> None:
-        if not self.is_dirty:
+        if not self.backup_path:
             return
 
-        self.is_dirty = False
+        self.storage.clear()
 
-        self.main_storage.clear()
-        for k, v in self.backup_storage.items():
-            self.main_storage[k] = v
+        backup_storage = Storage(path=self.backup_path)
+        for k, v in backup_storage.items():
+            self.storage[k] = v
 
-        self.backup_storage.file.close()
-        self.backup_storage = None
+        Path(self.backup_path).unlink(missing_ok=True)
+        self.backup_path = None
 
     def load(self, path: str) -> None:
-        self.main_storage = Storage(path=path)
-        self.backup_storage = None
-        self.is_dirty = False
+        self.storage = Storage(path=path)
+        self.backup_path = None
 
     def save(self, path: Optional[str] = None) -> None:
         if not path:
-            self.is_dirty = False
             return
 
         destination = Path(path).resolve()
-        source = Path(self.main_storage.path).resolve()
+        source = Path(self.storage.path).resolve()
 
         shutil.copy(source, destination)
 
-        self.main_storage.path = path
-        self.is_dirty = False
+        self.storage.path = path
 
     def keys(self) -> List[str]:
-        return self.main_storage.keys()
+        return self.storage.keys()
 
     def items(self) -> List[Tuple[str, str]]:
-        return self.main_storage.items()
+        return self.storage.items()
 
     def commit_success_event(self, key: str) -> None:
-        self.main_storage.commit_success_event(key=key)
+        self.storage.commit_success_event(key=key)
 
     def commit_failure_event(self, key: str) -> None:
-        self.main_storage.commit_failure_event(key=key)
+        self.storage.commit_failure_event(key=key)
 
     def commit_hint_event(self, key: str) -> None:
-        self.main_storage.commit_hint_event(key=key)
+        self.storage.commit_hint_event(key=key)

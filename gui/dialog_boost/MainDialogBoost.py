@@ -242,7 +242,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         if not key:
             return
 
-        if not self.__repository.is_dirty:
+        if not self.__repository.backup_path:
             self.__repository.save(path=f"{self.__repository.path}.backup")
 
         del self.__repository[key]
@@ -262,7 +262,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
     @pyqtSlot()
     def __onActionNewTriggered(self):
-        if self.__repository.is_dirty:
+        if self.__repository.backup_path:
             message_box = QMessageBox(parent=self)
             message_box.setIcon(QMessageBox.Question)
             message_box.setWindowTitle("Внимание!")
@@ -313,7 +313,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
     @pyqtSlot()
     def __onActionOpenTriggered(self):
-        if self.__repository.is_dirty:
+        if self.__repository.backup_path:
             messageBox = QMessageBox()
             messageBox.setIcon(QMessageBox.Question)
             messageBox.setWindowTitle("Внимание!")
@@ -348,7 +348,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
             path = ".../" + "/".join(Path(self.__repository.path).parts[-offset:])
 
-        if self.__repository.is_dirty:
+        if self.__repository.backup_path:
             message_box = QMessageBox(parent=self)
             message_box.setIcon(QMessageBox.Question)
             message_box.setWindowTitle("Внимание!")
