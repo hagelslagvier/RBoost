@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Optional
 
+from PyQt5 import QtCore
 from PyQt5.QtCore import QEvent, QPoint, QSettings, Qt, pyqtSlot
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import (
@@ -118,25 +119,27 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         hint_index = self.comboBoxHint.currentIndex()
         hint_value = Boost.HINTS_INDEX_TO_VALUE_MAP.get(hint_index, 0)
 
-        self.listWidgetExpressions.clear()
-        for expression in self.repository.keys():
-            self.listWidgetExpressions.addItem(mask_text(expression, hint_value))
+        pairs = []
+        for row in range(self.listWidgetExpressions.count()):
+            item = self.listWidgetExpressions.item(row)
+            key = item.text()
+            masked_key = mask_text(key, hint_value)
+            pairs.append([key, masked_key])
+            item.setText(masked_key)
 
-        meaning = self.textEditMeaning.toPlainText()
-        meaning = mask_text(meaning, hint_value)
-        self.textEditMeaning.setText(meaning)
+        self.listWidgetExpressions.pairs = pairs
+
+        value = self.textEditMeaning.toPlainText()
+        value = mask_text(value, hint_value)
+        self.textEditMeaning.setText(value)
 
     def unmaskContent(self):
-        self.listWidgetExpressions.clear()
+        for row in range(self.listWidgetExpressions.count()):
+            key, masked_key = self.listWidgetExpressions.pairs.pop(0)
+            item = self.listWidgetExpressions.item(row)
+            item.setText(key)
 
-        keys = self.repository.keys()
-        for key in keys:
-            self.listWidgetExpressions.addItem(key)
-
-        first_key = keys[0]
         self.listWidgetExpressions.setCurrentRow(0)
-        meaning = self.repository[first_key]
-        self.textEditMeaning.setText(meaning)
 
     @pyqtSlot()
     def onStartActionTriggered(self):
@@ -199,7 +202,12 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
         self.repository[key] = value
 
-        self.listWidgetExpressions.addItem(key)
+        item = QListWidgetItem()
+        item.setText(key)
+        item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable)
+        item.setCheckState(QtCore.Qt.Checked)
+        self.listWidgetExpressions.addItem(item)
+
         self.listWidgetExpressions.setCurrentItem(QListWidgetItem(key))
 
         self.setWindowTitle("Boost - {}*".format(self.repository.path))
@@ -207,14 +215,14 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
     @pyqtSlot(str, str)
     def onEditItem(self, new_key: str, new_value: str) -> None:
         current_row = self.listWidgetExpressions.currentRow()
-        current_item = self.listWidgetExpressions.currentItem()
-        current_key = current_item.text()
-        self.listWidgetExpressions.takeItem(current_row)
+        item = self.listWidgetExpressions.takeItem(current_row)
+        key = item.text()
 
-        del self.repository[current_key]
+        del self.repository[key]
         self.repository[new_key] = new_value
 
-        self.listWidgetExpressions.insertItem(current_row, new_key)
+        item.setText(new_key)
+        self.listWidgetExpressions.insertItem(current_row, item)
         self.listWidgetExpressions.setCurrentRow(current_row)
         self.textEditMeaning.setText(new_value)
 
@@ -234,27 +242,17 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
     @pyqtSlot()
     def onDeleteItemClicked(self):
-        row = self.listWidgetExpressions.currentRow()
-        if -1 == row:
+        current_row = self.listWidgetExpressions.currentRow()
+        if -1 == current_row:
             return
 
-        key = self.listWidgetExpressions.currentItem().text()
+        item = self.listWidgetExpressions.takeItem(current_row)
+
+        key = item.text()
         if not key:
             return
 
         del self.repository[key]
-
-        self.listWidgetExpressions.clear()
-
-        expressions = self.repository.keys()
-        if expressions:
-            self.listWidgetExpressions.addItems(self.repository.keys())
-
-            previous_row = row - 1 if row > 0 else 0
-            self.listWidgetExpressions.setCurrentRow(previous_row)
-
-        else:
-            self.textEditMeaning.clear()
 
         self.setWindowTitle("Boost - {}*".format(self.repository.path))
 
@@ -265,9 +263,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
             message_box.setIcon(QMessageBox.Question)
             message_box.setWindowTitle("Внимание!")
             message_box.setText(
-                "Файл {} был изменен! Сохранить изменения?".format(
-                    self.repository.path
-                )
+                "Файл {} был изменен! Сохранить изменения?".format(self.repository.path)
             )
 
             ok_button = message_box.addButton("Ok", QMessageBox.ActionRole)
@@ -319,9 +315,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
             message_box.setIcon(QMessageBox.Question)
             message_box.setWindowTitle("Внимание!")
             message_box.setText(
-                "Файл {} был изменен! Сохранить изменения?".format(
-                    self.repository.path
-                )
+                "Файл {} был изменен! Сохранить изменения?".format(self.repository.path)
             )
 
             ok_button = message_box.addButton("Ok", QMessageBox.ActionRole)
@@ -398,11 +392,12 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         self.listWidgetExpressions.clear()
         self.textEditMeaning.clear()
 
-        self.listWidgetExpressions.clear()
-        self.textEditMeaning.clear()
-
         for key in self.repository.keys():
-            self.listWidgetExpressions.addItem(key)
+            item = QListWidgetItem()
+            item.setText(key)
+            item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable)
+            item.setCheckState(QtCore.Qt.Checked)
+            self.listWidgetExpressions.addItem(item)
 
         self.listWidgetExpressions.setCurrentRow(0)
 
