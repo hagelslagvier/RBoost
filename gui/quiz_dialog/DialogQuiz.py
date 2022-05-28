@@ -1,4 +1,7 @@
-from random import randint
+from datetime import datetime
+import random
+from itertools import cycle
+from random import randint, choice, seed
 
 from PyQt5.QtCore import QEvent, Qt, QTimer, pyqtSignal, pyqtSlot
 from PyQt5.QtGui import QFocusEvent, QTextCursor
@@ -26,6 +29,7 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
         self.order = 0
         self.repository = None
         self.index = 0
+        self.picker = None
 
         self.timer = QTimer()
         self.timer.setSingleShot(True)
@@ -78,20 +82,41 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
     def showEvent(self, showEvent):
         self.onDialogShown.emit()  # mask MainWindow
 
+        checked_items = {
+            index: key
+            for index, (key, (_, is_checked)) in enumerate(self.repository.items())
+            if is_checked
+        }
+        checked_indexes = list(checked_items.keys())
+
+        def picker(keys):
+            yield from cycle(keys)
+
+        def random_picker(keys):
+            random.seed(int(datetime.utcnow().timestamp()))
+            while True:
+                yield random.choice(keys)
+
         if 0 == self.order:
             self.index = 0
 
+            self.picker = self.picker or picker(keys=sorted(checked_indexes, reverse=False))
+
         elif 1 == self.order:
             self.index = len(self.repository) - 1
+            self.picker = self.picker or picker(keys=sorted(checked_indexes, reverse=True))
 
         else:
             self.index = randint(0, len(self.repository) - 1)
+            self.picker = self.picker or random_picker(keys=checked_indexes)
 
         self.pick()
+
 
     def hideEvent(self, hideEvent):
         self.onDialogHidden.emit()
         # self.storage.dump()
+        self.picker = None
 
     @pyqtSlot()
     def __onAlphabetButtonClicked(self):
@@ -163,7 +188,8 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
 
     def makeExpressionQuiz(self):
         keys = list(self.repository.keys())
-        key = keys[self.index]
+        key = keys[next(self.picker)]
+
         value = self.repository[key]
 
         self.textEditMeaning.setText(value)
@@ -177,7 +203,8 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
 
     def makeMeaningQuiz(self):
         keys = list(self.repository.keys())
-        key = keys[self.index]
+        key = keys[next(self.picker)]
+
         value = self.repository[key]
 
         self.textEditExpression.setText(key)
@@ -201,6 +228,16 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
                 self.makeMeaningQuiz()
 
     def next(self):
+        checked_items = {
+            index: key
+            for index, (key, (_, is_checked)) in enumerate(self.repository.items())
+            if is_checked
+        }
+        checked_indexes = list(checked_items.keys())
+
+        def take_next(iterable):
+            yield from cycle(iterable)
+
         keys = self.repository.keys()
         count = len(keys)
 
