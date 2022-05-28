@@ -202,16 +202,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         else:
             self.repository.set_unchecked(key=key)
 
-        checked_items = []
-        for row in range(self.listWidgetExpressions.count()):
-            item = self.listWidgetExpressions.item(row)
-            if item.checkState() == Qt.Checked:
-                checked_items.append(item)
-
-        if len(checked_items):
-            self.actionStart.setEnabled(True)
-        else:
-            self.actionStart.setEnabled(False)
+        self.updateStartMenuActionState()
 
     @pyqtSlot(QPoint)
     def onListWidgetExpressionsContextMenuRequested(self, point):
@@ -429,6 +420,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
             self.listWidgetExpressions.addItem(item)
 
         self.listWidgetExpressions.setCurrentRow(0)
+        self.updateStartMenuActionState()
 
     def saveRepository(self, path: Optional[str] = None):
         self.repository.save(path=path)
@@ -491,3 +483,15 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
             "comboboxOrder_currentIndex", self.comboBoxOrder.currentIndex()
         )
         settings.setValue("repositoryPath", str(self.repository.path))
+
+    def updateStartMenuActionState(self):
+        checked_items = []
+        for row in range(self.listWidgetExpressions.count()):
+            item = self.listWidgetExpressions.item(row)
+            if item.checkState() == Qt.Checked:
+                checked_items.append(item)
+
+        if len(checked_items):
+            self.actionStart.setEnabled(True)
+        else:
+            self.actionStart.setEnabled(False)
