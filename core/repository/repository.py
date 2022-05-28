@@ -114,8 +114,12 @@ class Storage:
         DeclarativeBase.metadata.create_all(bind=engine)
 
         backup_storage = Storage(path=path)
-        for key, value in self.items():
+        for key, (value, is_checked) in self.items():
             backup_storage[key] = value
+            if is_checked:
+                backup_storage.set_checked(key=key)
+            else:
+                backup_storage.set_unchecked(key=key)
 
     def keys(self) -> List[str]:
         session = self.session_factory()
@@ -128,12 +132,13 @@ class Storage:
 
         return keys
 
-    def items(self) -> List[Tuple[str, str]]:
+    def items(self) -> List[Tuple[str, Tuple[str, bool]]]:
         session = self.session_factory()
 
         items = [
-            (record.key, record.value) for record in session.query(Record)
-        ]  # TODO: (1) retrieve key and value only, (2) add order_by
+            (record.key, (record.value, record.is_checked))
+            for record in session.query(Record).order_by(Record.id)
+        ]
 
         return items
 
@@ -195,8 +200,12 @@ class Repository:
         self.storage.clear()
 
         backup_storage = Storage(path=self.backup_path)
-        for k, v in backup_storage.items():
-            self.storage[k] = v
+        for key, (value, is_checked) in backup_storage.items():
+            self.storage[key] = value
+            if is_checked:
+                self.storage.set_checked(key=key)
+            else:
+                self.storage.set_unchecked(key=key)
 
         Path(self.backup_path).unlink(missing_ok=True)
         self.backup_path = None
@@ -220,7 +229,7 @@ class Repository:
     def keys(self) -> List[str]:
         return self.storage.keys()
 
-    def items(self) -> List[Tuple[str, str]]:
+    def items(self) -> List[Tuple[str, Tuple[str, bool]]]:
         return self.storage.items()
 
     def commit_success_event(self, key: str) -> None:

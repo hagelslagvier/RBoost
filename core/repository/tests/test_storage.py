@@ -236,7 +236,11 @@ def test_if_can_return_items():
     storage["bar"] = "2"
     storage["baz"] = "3"
 
-    assert storage.items() == [("foo", "1"), ("bar", "2"), ("baz", "3")]
+    assert storage.items() == [
+        ("foo", ("1", True)),
+        ("bar", ("2", True)),
+        ("baz", ("3", True)),
+    ]
 
 
 def test_if_can_clear_items():
@@ -248,7 +252,11 @@ def test_if_can_clear_items():
     storage["bar"] = "2"
     storage["baz"] = "3"
 
-    assert storage.items() == [("foo", "1"), ("bar", "2"), ("baz", "3")]
+    assert storage.items() == [
+        ("foo", ("1", True)),
+        ("bar", ("2", True)),
+        ("baz", ("3", True)),
+    ]
 
     storage.clear()
 
