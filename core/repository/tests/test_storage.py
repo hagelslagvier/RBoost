@@ -20,6 +20,7 @@ def _format_record(record: Record) -> Dict:
         "id": record.id,
         "key": record.key,
         "value": record.value,
+        "is_checked": record.is_checked,
         "events": [_format_event(event=event) for event in record.events],
     }
 
@@ -45,14 +46,17 @@ def test_if_can_get_item():
     assert storage.keys() == []
     assert storage["foo"] is None
 
-    record = Record(key="foo", value="bar")
+    record = Record(key="foo", value="bar", is_checked=True)
     session.add(record)
     session.commit()
 
     records = [_format_record(record=record) for record in session.query(Record).all()]
-    assert records == [{"events": [], "id": 1, "key": "foo", "value": "bar"}]
+    assert records == [
+        {"events": [], "id": 1, "key": "foo", "value": "bar", "is_checked": True}
+    ]
     assert storage.keys() == ["foo"]
     assert storage["foo"] == "bar"
+    assert storage.is_checked(key="foo") is True
 
 
 def test_if_can_set_item():
@@ -67,9 +71,18 @@ def test_if_can_set_item():
     storage["foo"] = "bar"
 
     records = [_format_record(record=record) for record in session.query(Record).all()]
-    assert records == [{"events": [], "id": 1, "key": "foo", "value": "bar"}]
+    assert records == [
+        {"events": [], "id": 1, "key": "foo", "value": "bar", "is_checked": True}
+    ]
     assert storage.keys() == ["foo"]
     assert storage["foo"] == "bar"
+    assert storage.is_checked(key="foo") is True
+
+    storage.set_unchecked(key="foo")
+    assert storage.is_checked(key="foo") is False
+
+    storage.set_checked(key="foo")
+    assert storage.is_checked(key="foo") is True
 
 
 def test_if_can_del_item():
@@ -83,8 +96,8 @@ def test_if_can_del_item():
         for record in session.query(Record).order_by(asc(Record.id)).all()
     ]
     assert records == [
-        {"id": 1, "key": "foo", "value": "bar", "events": []},
-        {"id": 2, "key": "spam", "value": "eggs", "events": []},
+        {"id": 1, "key": "foo", "value": "bar", "is_checked": True, "events": []},
+        {"id": 2, "key": "spam", "value": "eggs", "is_checked": True, "events": []},
     ]
     assert storage.keys() == ["foo", "spam"]
 
@@ -95,7 +108,7 @@ def test_if_can_del_item():
         for record in session.query(Record).order_by(asc(Record.id)).all()
     ]
     assert records == [
-        {"id": 1, "key": "foo", "value": "bar", "events": []},
+        {"id": 1, "key": "foo", "value": "bar", "is_checked": True, "events": []},
     ]
     assert storage.keys() == ["foo"]
 
@@ -122,6 +135,7 @@ def test_if_can_commit_success_event():
             "id": 1,
             "key": "foo",
             "value": "bar",
+            "is_checked": True,
             "events": [{"id": 1, "event_type": "SUCCESS", "record_id": 1}],
         }
     ]
@@ -156,6 +170,7 @@ def test_if_can_commit_hint_event():
             "id": 1,
             "key": "foo",
             "value": "bar",
+            "is_checked": True,
         }
     ]
 
@@ -189,6 +204,7 @@ def test_if_can_commit_failure_event():
             "id": 1,
             "key": "foo",
             "value": "bar",
+            "is_checked": True,
         }
     ]
 

@@ -4,7 +4,7 @@ from pathlib import Path
 from core.repository.repository import Repository, Storage
 
 
-def test_if_doesnt_make_backup_on_getitem():
+def test_if_doesnt_make_backup_on_getitem(db):
     here = Path(__file__).parent.resolve()
     original = here / "fixtures/boost.db"
 

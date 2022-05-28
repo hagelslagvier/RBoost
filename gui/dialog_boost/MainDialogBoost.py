@@ -91,6 +91,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
         self.listWidgetExpressions.currentRowChanged.connect(self.onCurrentRowChanged)
         self.listWidgetExpressions.itemDoubleClicked.connect(self.onItemDoubleClicked)
+        self.listWidgetExpressions.itemChanged.connect(self.onItemChanged)
 
         self.dialogItemAdd.emitItem.connect(self.onAddItem)
         self.dialogItemEdit.emitItem.connect(self.onEditItem)
@@ -119,25 +120,33 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         hint_index = self.comboBoxHint.currentIndex()
         hint_value = Boost.HINTS_INDEX_TO_VALUE_MAP.get(hint_index, 0)
 
-        pairs = []
-        for row in range(self.listWidgetExpressions.count()):
-            item = self.listWidgetExpressions.item(row)
-            key = item.text()
+        self.listWidgetExpressions.clear()
+
+        for key in self.repository.keys():
             masked_key = mask_text(key, hint_value)
-            pairs.append([key, masked_key])
+            is_checked = self.repository.is_checked(key=key)
+            item = QListWidgetItem()
             item.setText(masked_key)
+            item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable)
+            item.setCheckState(QtCore.Qt.Checked if is_checked else QtCore.Qt.Unchecked)
+            self.listWidgetExpressions.addItem(item)
 
-        self.listWidgetExpressions.pairs = pairs
+        self.listWidgetExpressions.setCurrentRow(0)
 
-        value = self.textEditMeaning.toPlainText()
-        value = mask_text(value, hint_value)
-        self.textEditMeaning.setText(value)
+        masked_value = self.textEditMeaning.toPlainText()
+        masked_value = mask_text(masked_value, hint_value)
+        self.textEditMeaning.setText(masked_value)
 
     def unmaskContent(self):
-        for row in range(self.listWidgetExpressions.count()):
-            key, masked_key = self.listWidgetExpressions.pairs.pop(0)
-            item = self.listWidgetExpressions.item(row)
+        self.listWidgetExpressions.clear()
+
+        for key in self.repository.keys():
+            is_checked = self.repository.is_checked(key=key)
+            item = QListWidgetItem()
             item.setText(key)
+            item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable)
+            item.setCheckState(QtCore.Qt.Checked if is_checked else QtCore.Qt.Unchecked)
+            self.listWidgetExpressions.addItem(item)
 
         self.listWidgetExpressions.setCurrentRow(0)
 
@@ -165,11 +174,11 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         self.unmaskContent()
 
     @pyqtSlot(int)
-    def onCurrentRowChanged(self, currentRow):
-        if -1 == currentRow:
+    def onCurrentRowChanged(self, current_row):
+        if -1 == current_row:
             return
 
-        row = self.listWidgetExpressions.item(currentRow)
+        row = self.listWidgetExpressions.item(current_row)
 
         key = row.text()
         value = self.repository[key]
@@ -177,13 +186,32 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         self.textEditMeaning.setText(value)
 
     @pyqtSlot(QListWidgetItem)
-    def onItemDoubleClicked(self, item):
+    def onItemDoubleClicked(self, item: QListWidgetItem):
         expression = item.text()
         meaning = self.repository[expression]
 
         self.dialogItemEdit.setExpression(expression)
         self.dialogItemEdit.setMeaning(meaning)
         self.dialogItemEdit.show()
+
+    @pyqtSlot(QListWidgetItem)
+    def onItemChanged(self, item: QListWidgetItem):
+        key = item.text()
+        if item.checkState() == Qt.Checked:
+            self.repository.set_checked(key=key)
+        else:
+            self.repository.set_unchecked(key=key)
+
+        checked_items = []
+        for row in range(self.listWidgetExpressions.count()):
+            item = self.listWidgetExpressions.item(row)
+            if item.checkState() == Qt.Checked:
+                checked_items.append(item)
+
+        if len(checked_items):
+            self.actionStart.setEnabled(True)
+        else:
+            self.actionStart.setEnabled(False)
 
     @pyqtSlot(QPoint)
     def onListWidgetExpressionsContextMenuRequested(self, point):
@@ -393,10 +421,11 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         self.textEditMeaning.clear()
 
         for key in self.repository.keys():
+            is_checked = self.repository.is_checked(key=key)
             item = QListWidgetItem()
             item.setText(key)
             item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable)
-            item.setCheckState(QtCore.Qt.Checked)
+            item.setCheckState(QtCore.Qt.Checked if is_checked else QtCore.Qt.Unchecked)
             self.listWidgetExpressions.addItem(item)
 
         self.listWidgetExpressions.setCurrentRow(0)

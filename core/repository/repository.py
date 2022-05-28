@@ -74,6 +74,31 @@ class Storage:
     def commit_hint_event(self, key: str) -> None:
         self._commit_event(key=key, event_type=EventType.HINT)
 
+    def is_checked(self, key: str) -> bool:
+        session = self.session_factory()
+
+        record = session.query(Record).filter(Record.key == key).one()
+
+        return record.is_checked
+
+    def set_checked(self, key: str) -> None:
+        session = self.session_factory()
+
+        record = session.query(Record).filter(Record.key == key).one()
+        record.is_checked = True
+
+        session.add(record)
+        session.commit()
+
+    def set_unchecked(self, key: str) -> None:
+        session = self.session_factory()
+
+        record = session.query(Record).filter(Record.key == key).one()
+        record.is_checked = False
+
+        session.add(record)
+        session.commit()
+
     def load(self, path: str) -> None:
         self.path = path
         self.url = f"sqlite:///{self.path if self.path == ':memory:' else Path(self.path).resolve()}"
@@ -145,6 +170,15 @@ class Repository:
     @property
     def path(self) -> str:
         return self.storage.path
+
+    def is_checked(self, key: str) -> bool:
+        return self.storage.is_checked(key=key)
+
+    def set_checked(self, key: str) -> None:
+        self.storage.set_checked(key=key)
+
+    def set_unchecked(self, key: str) -> None:
+        self.storage.set_unchecked(key=key)
 
     def backup(self) -> None:
         backup_file = NamedTemporaryFile("w+")

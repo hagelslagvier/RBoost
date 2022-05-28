@@ -1,6 +1,15 @@
 from datetime import datetime
 
-from sqlalchemy import Column, DateTime, Enum, ForeignKey, Integer, String, Text
+from sqlalchemy import (
+    Boolean,
+    Column,
+    DateTime,
+    Enum,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import backref, relationship
 
@@ -36,6 +45,7 @@ class Record(BaseModel):
 
     key = Column(String(length=256), unique=True, nullable=False)
     value = Column(Text(length=1024), nullable=False)
+    is_checked = Column(Boolean, default=True)
 
     def __repr__(self):
-        return f"Record(id={self.id})"
+        return f"Record(id={self.id}, key={self.key}, value={self.value}, is_checked={self.is_checked})"

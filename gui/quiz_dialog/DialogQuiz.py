@@ -201,19 +201,54 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
                 self.makeMeaningQuiz()
 
     def next(self):
-        count = len(self.repository)
+        keys = self.repository.keys()
+        count = len(keys)
+
+        def next_forward():
+            found = False
+
+            while not found:
+                self.index += 1
+                if self.index >= count:
+                    self.index = 0
+
+                key = keys[self.index]
+                is_checked = self.repository.is_checked(key=key)
+                if is_checked:
+                    found = True
+
+        def next_backward():
+            found = False
+
+            while not found:
+                self.index -= 1
+                if self.index < 0:
+                    self.index = len(self.repository) - 1
+
+                key = keys[self.index]
+                is_checked = self.repository.is_checked(key=key)
+                if is_checked:
+                    found = True
+
+        def next_random():
+            found = False
+
+            while not found:
+                self.index = randint(0, count - 1)
+
+                key = keys[self.index]
+                is_checked = self.repository.is_checked(key=key)
+                if is_checked:
+                    found = True
 
         if 0 == self.order:
-            self.index += 1
-            if self.index >= count:
-                self.index = 0
+            next_forward()
 
         elif 1 == self.order:
-            self.index -= 1
-            if self.index < 0:
-                self.index = len(self.repository) - 1
+            next_backward()
+
         else:
-            self.index = randint(0, count - 1)
+            next_random()
 
     def flashGreen(self):
         self.__setColor((139, 252, 113))
