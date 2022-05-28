@@ -1,7 +1,6 @@
-from datetime import datetime
 import random
+from datetime import datetime
 from itertools import cycle
-from random import randint, choice, seed
 
 from PyQt5.QtCore import QEvent, Qt, QTimer, pyqtSignal, pyqtSlot
 from PyQt5.QtGui import QFocusEvent, QTextCursor
@@ -29,7 +28,7 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
         self.order = 0
         self.repository = None
         self.index = 0
-        self.picker = None
+        self.series = None
 
         self.timer = QTimer()
         self.timer.setSingleShot(True)
@@ -89,34 +88,33 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
         }
         checked_indexes = list(checked_items.keys())
 
-        def picker(keys):
+        def make_series(keys):
             yield from cycle(keys)
 
-        def random_picker(keys):
+        def make_random_series(keys):
             random.seed(int(datetime.utcnow().timestamp()))
+
             while True:
                 yield random.choice(keys)
 
         if 0 == self.order:
-            self.index = 0
-
-            self.picker = self.picker or picker(keys=sorted(checked_indexes, reverse=False))
+            self.series = self.series or make_series(
+                keys=sorted(checked_indexes, reverse=False)
+            )
 
         elif 1 == self.order:
-            self.index = len(self.repository) - 1
-            self.picker = self.picker or picker(keys=sorted(checked_indexes, reverse=True))
+            self.series = self.series or make_series(
+                keys=sorted(checked_indexes, reverse=True)
+            )
 
         else:
-            self.index = randint(0, len(self.repository) - 1)
-            self.picker = self.picker or random_picker(keys=checked_indexes)
+            self.series = self.series or make_random_series(keys=checked_indexes)
 
-        self.pick()
-
+        self.take_next()
 
     def hideEvent(self, hideEvent):
         self.onDialogHidden.emit()
-        # self.storage.dump()
-        self.picker = None
+        self.series = None
 
     @pyqtSlot()
     def __onAlphabetButtonClicked(self):
@@ -158,8 +156,7 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
             self.__compareDialog.textEditUserAnswer.setHtml(html)
             self.__compareDialog.exec()
 
-        self.next()
-        self.pick()
+        self.take_next()
 
     @pyqtSlot()
     def __onPushButtonHintClicked(self):
@@ -167,8 +164,7 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
         self.repository.commit_hint_event(key=key)
         self.flashYellow()
 
-        self.next()
-        self.pick()
+        self.take_next()
 
     @pyqtSlot()
     def __onPushButtonCancelClicked(self):
@@ -188,7 +184,7 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
 
     def makeExpressionQuiz(self):
         keys = list(self.repository.keys())
-        key = keys[next(self.picker)]
+        key = keys[next(self.series)]
 
         value = self.repository[key]
 
@@ -203,7 +199,7 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
 
     def makeMeaningQuiz(self):
         keys = list(self.repository.keys())
-        key = keys[next(self.picker)]
+        key = keys[next(self.series)]
 
         value = self.repository[key]
 
@@ -216,7 +212,7 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
         self.textEditMeaning.setEnabled(True)
         self.textEditMeaning.setFocus()
 
-    def pick(self):
+    def take_next(self):
         if 0 == self.shuffle:
             self.makeExpressionQuiz()
         elif 1 == self.shuffle:
@@ -226,66 +222,6 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
                 self.makeExpressionQuiz()
             else:
                 self.makeMeaningQuiz()
-
-    def next(self):
-        checked_items = {
-            index: key
-            for index, (key, (_, is_checked)) in enumerate(self.repository.items())
-            if is_checked
-        }
-        checked_indexes = list(checked_items.keys())
-
-        def take_next(iterable):
-            yield from cycle(iterable)
-
-        keys = self.repository.keys()
-        count = len(keys)
-
-        def next_forward():
-            found = False
-
-            while not found:
-                self.index += 1
-                if self.index >= count:
-                    self.index = 0
-
-                key = keys[self.index]
-                is_checked = self.repository.is_checked(key=key)
-                if is_checked:
-                    found = True
-
-        def next_backward():
-            found = False
-
-            while not found:
-                self.index -= 1
-                if self.index < 0:
-                    self.index = len(self.repository) - 1
-
-                key = keys[self.index]
-                is_checked = self.repository.is_checked(key=key)
-                if is_checked:
-                    found = True
-
-        def next_random():
-            found = False
-
-            while not found:
-                self.index = randint(0, count - 1)
-
-                key = keys[self.index]
-                is_checked = self.repository.is_checked(key=key)
-                if is_checked:
-                    found = True
-
-        if 0 == self.order:
-            next_forward()
-
-        elif 1 == self.order:
-            next_backward()
-
-        else:
-            next_random()
 
     def flashGreen(self):
         self.__setColor((139, 252, 113))
