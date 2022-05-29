@@ -27,7 +27,7 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
         self.shuffle = 0
         self.order = 0
         self.repository = None
-        self.index = 0
+        self.current_index = 0
         self.series = None
 
         self.timer = QTimer()
@@ -126,7 +126,7 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
 
     @pyqtSlot()
     def __onPushButtonCheckClicked(self):
-        key = list(self.repository.keys())[self.index]
+        key = list(self.repository.keys())[self.current_index]
         value = self.repository[key]
 
         expression = self.textEditExpression.toPlainText()
@@ -160,7 +160,7 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
 
     @pyqtSlot()
     def __onPushButtonHintClicked(self):
-        key = list(self.repository.keys())[self.index]
+        key = list(self.repository.keys())[self.current_index]
         self.repository.commit_hint_event(key=key)
         self.flashYellow()
 
@@ -183,8 +183,9 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
         print("Mouse released")
 
     def makeExpressionQuiz(self):
+        self.current_index = next(self.series)
         keys = list(self.repository.keys())
-        key = keys[next(self.series)]
+        key = keys[self.current_index]
 
         value = self.repository[key]
 
@@ -198,8 +199,9 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
         self.textEditExpression.setFocus()
 
     def makeMeaningQuiz(self):
+        self.current_index = next(self.series)
         keys = list(self.repository.keys())
-        key = keys[next(self.series)]
+        key = keys[self.current_index]
 
         value = self.repository[key]
 
