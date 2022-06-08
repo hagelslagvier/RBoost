@@ -1,7 +1,7 @@
 import shutil
 from pathlib import Path
 from tempfile import NamedTemporaryFile
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Union
 
 from sqlalchemy import asc, create_engine, func
 from sqlalchemy.orm import sessionmaker
@@ -29,14 +29,29 @@ class Storage:
 
         return value
 
-    def __setitem__(self, key: str, value: str) -> None:
+    def __setitem__(self, key: Union[str, Tuple[str, str]], value: str) -> None:
         session = self.session_factory()
 
-        record = session.query(Record).filter(Record.key == key).one_or_none()
-        if record:
-            record.value = value
+        if isinstance(key, str):
+            record = session.query(Record).filter(Record.key == key).one_or_none()
+            if record:
+                record.value = value
+            else:
+                record = Record(key=key, value=value)
+
+        elif isinstance(key, tuple):
+            old_key, new_key = key
+            record = session.query(Record).filter(Record.key == old_key).one_or_none()
+            if record:
+                record.key = new_key
+                record.value = value
+            else:
+                raise RuntimeError(f"Record with key='{old_key}' not found")
+
         else:
-            record = Record(key=key, value=value)
+            raise TypeError(
+                f"key must be of type Union[str, Tuple[str, str]], got {tuple(key)}"
+            )
 
         session.add(record)
         session.commit()

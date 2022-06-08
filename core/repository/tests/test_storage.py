@@ -1,10 +1,22 @@
+import time
 from pathlib import Path
-from typing import Dict
+from typing import Dict, NamedTuple
 
+from pytest import raises
 from sqlalchemy import asc
 
 from core.repository.models import Event, Record
 from core.repository.repository import Storage
+
+
+class AggregatedValue(NamedTuple):
+    value: str
+    is_selected: bool
+
+
+class Item(NamedTuple):
+    key: str
+    aggregated_value: AggregatedValue
 
 
 def _format_event(event: Event) -> Dict:
@@ -262,3 +274,79 @@ def test_if_can_clear_items():
 
     assert storage.keys() == []
     assert storage.items() == []
+
+
+def test_if_can_order_keys():
+    storage = Storage()
+
+    assert storage.keys() == []
+
+    items = [
+        Item(key=key, aggregated_value=AggregatedValue(value=value, is_selected=True))
+        for key, value in [("foo", "spam"), ("bar", "eggs"), ("baz", "ham")]
+    ]
+
+    for key, (value, is_selected) in items:
+        storage[key] = value
+        set_state = storage.set_checked if is_selected else storage.set_unchecked
+        set_state(key=key)
+        time.sleep(0.1)
+
+    stored_items = storage.items()
+    assert items == stored_items
+
+    stored_keys = storage.keys()
+    assert stored_keys == ["foo", "bar", "baz"]
+
+    storage["foo"] = "spam2"
+    stored_keys = storage.keys()
+    assert stored_keys == ["foo", "bar", "baz"]
+
+    del storage["foo"]
+    stored_keys = storage.keys()
+    assert stored_keys == ["bar", "baz"]
+
+    storage["foo"] = "spam"
+    stored_keys = storage.keys()
+    assert stored_keys == ["bar", "baz", "foo"]
+
+
+def test_if_can_replace_keys_preserving_order():
+    storage = Storage()
+
+    assert storage.keys() == []
+
+    items = [
+        Item(key=key, aggregated_value=AggregatedValue(value=value, is_selected=True))
+        for key, value in [("foo", "spam"), ("bar", "eggs"), ("baz", "ham")]
+    ]
+
+    for key, (value, is_selected) in items:
+        storage[key] = value
+        set_state = storage.set_checked if is_selected else storage.set_unchecked
+        set_state(key=key)
+        time.sleep(0.1)
+
+    stored_items = storage.items()
+    assert items == stored_items
+
+    stored_keys = storage.keys()
+    assert stored_keys == ["foo", "bar", "baz"]
+
+    storage["foo", "foo_new"] = "spam"
+
+    stored_keys = storage.keys()
+    assert stored_keys == ["foo_new", "bar", "baz"]
+
+    storage["baz", "baz_new"] = "ham"
+    stored_keys = storage.keys()
+    assert stored_keys == ["foo_new", "bar", "baz_new"]
+
+    expected_items = [
+        Item(key=key, aggregated_value=AggregatedValue(value=value, is_selected=True))
+        for key, value in [("foo_new", "spam"), ("bar", "eggs"), ("baz_new", "ham")]
+    ]
+    assert storage.items() == expected_items
+
+    with raises(TypeError):
+        storage[{42, "42"}] = "boooooom"
