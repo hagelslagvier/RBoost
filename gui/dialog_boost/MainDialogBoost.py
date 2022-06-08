@@ -235,10 +235,9 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
     def onEditItem(self, new_key: str, new_value: str) -> None:
         current_row = self.listWidgetExpressions.currentRow()
         item = self.listWidgetExpressions.takeItem(current_row)
-        key = item.text()
+        old_key = item.text()
 
-        del self.repository[key]
-        self.repository[new_key] = new_value
+        self.repository[old_key, new_key] = new_value
 
         item.setText(new_key)
         self.listWidgetExpressions.insertItem(current_row, item)
