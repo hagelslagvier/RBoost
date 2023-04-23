@@ -17,8 +17,7 @@ class Storage:
         self.engine = None
         self.session_factory = None
 
-        if self.path:
-            self.load(path=self.path)
+        self.load(path=self.path)
 
     def __getitem__(self, key: str) -> Optional[str]:
         session = self.session_factory()
@@ -78,7 +77,7 @@ class Storage:
 
         record = session.query(Record).filter(Record.key == key).one()
         event = Event(event_type=event_type, record=record)
-        
+
         session.add(event)
         session.commit()
         session.close()
