@@ -43,7 +43,6 @@ class Storage:
             record = session.query(Record).filter(Record.key == old_key).one_or_none()
             if record:
                 record.key = new_key
-                record.value = value
             else:
                 raise RuntimeError(f"Record with key='{old_key}' not found")
 
