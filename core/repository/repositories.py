@@ -133,18 +133,20 @@ class Storage:
         DeclarativeBase.metadata.create_all(bind=self.engine)
 
     def dump(self, path: str) -> None:
+        Path(path).unlink(missing_ok=True)
+
         url = f"sqlite:///{Path(path).resolve()}"
         engine = create_engine(url=url)
 
         DeclarativeBase.metadata.create_all(bind=engine)
 
-        backup_storage = Storage(path=path)
+        new_storage = Storage(path=path)
         for key, (value, is_checked) in self.items():
-            backup_storage[key] = value
+            new_storage[key] = value
             if is_checked:
-                backup_storage.set_checked(key=key)
+                new_storage.set_checked(key=key)
             else:
-                backup_storage.set_unchecked(key=key)
+                new_storage.set_unchecked(key=key)
 
     def keys(self) -> List[str]:
         session = self.session_factory()
