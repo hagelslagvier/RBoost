@@ -22,10 +22,9 @@ class Storage:
 
     def __getitem__(self, key: str) -> Optional[str]:
         session = self.session_factory()
-
         record = session.query(Record).filter(Record.key == key).one_or_none()
-
         value = record.value if record else None
+        session.close()
 
         return value
 
@@ -55,19 +54,23 @@ class Storage:
 
         session.add(record)
         session.commit()
+        session.close()
 
     def __delitem__(self, key: str) -> None:
         session = self.session_factory()
-
         record = session.query(Record).filter(Record.key == key).one()
 
         session.delete(record)
+
         session.commit()
+        session.close()
 
     def __len__(self) -> int:
         session = self.session_factory()
 
         count = session.query(func.count(Record.id)).scalar()
+
+        session.close()
 
         return count
 
@@ -79,6 +82,7 @@ class Storage:
         event = Event(event_type=event_type, record=record)
         session.add(event)
         session.commit()
+        session.close()
 
     def commit_success_event(self, key: str) -> None:
         self._commit_event(key=key, event_type=EventType.SUCCESS)
@@ -94,6 +98,8 @@ class Storage:
 
         record = session.query(Record).filter(Record.key == key).one()
 
+        session.close()
+
         return record.is_checked
 
     def set_checked(self, key: str) -> None:
@@ -104,6 +110,7 @@ class Storage:
 
         session.add(record)
         session.commit()
+        session.close()
 
     def set_unchecked(self, key: str) -> None:
         session = self.session_factory()
@@ -113,6 +120,7 @@ class Storage:
 
         session.add(record)
         session.commit()
+        session.close()
 
     def load(self, path: str) -> None:
         self.path = path
@@ -145,6 +153,8 @@ class Storage:
         ):  # TODO: retrieve id only
             keys.append(record.key)
 
+        session.close()
+
         return keys
 
     def items(self) -> List[Tuple[str, Tuple[str, bool]]]:
@@ -154,6 +164,8 @@ class Storage:
             (record.key, (record.value, record.is_checked))
             for record in session.query(Record).order_by(Record.id)
         ]
+
+        session.close()
 
         return items
 
