@@ -6,9 +6,10 @@ from PyQt5.QtWidgets import QApplication
 
 from gui.dialog_boost.MainDialogBoost import Boost
 
-application = QApplication(sys.argv)
+if __name__ == "__main__":
+    application = QApplication(sys.argv)
 
-boost = Boost()
-boost.show()
+    boost = Boost()
+    boost.show()
 
-sys.exit(application.exec_())
+    sys.exit(application.exec_())
