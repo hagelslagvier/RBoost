@@ -57,10 +57,10 @@ class Storage:
 
     def __delitem__(self, key: str) -> None:
         session = self.session_factory()
+
         record = session.query(Record).filter(Record.key == key).one()
 
         session.delete(record)
-
         session.commit()
         session.close()
 
@@ -77,8 +77,8 @@ class Storage:
         session = self.session_factory()
 
         record = session.query(Record).filter(Record.key == key).one()
-
         event = Event(event_type=event_type, record=record)
+        
         session.add(event)
         session.commit()
         session.close()
