@@ -16,6 +16,7 @@ from PyQt5.QtWidgets import (
 
 from core.repository.repositories import Repository
 from core.text import mask_text
+from gui.dialog_boost import constants as dialog_boost_constants
 from gui.dialog_boost.Ui_MainWindowBoost import Ui_MainWindowBoost
 from gui.dialog_item_add.DialogItemAdd import DialogItemAdd
 from gui.dialog_item_edit.DialogItemEdit import DialogItemEdit
@@ -23,13 +24,6 @@ from gui.quiz_dialog.DialogQuiz import DialogQuiz
 
 
 class Boost(QMainWindow, Ui_MainWindowBoost):
-    HINTS_INDEX_TO_VALUE_MAP = {}
-    HINTS_INDEX_TO_VALUE_MAP[0] = 0
-    HINTS_INDEX_TO_VALUE_MAP[1] = 0.7
-    HINTS_INDEX_TO_VALUE_MAP[2] = 0.8
-    HINTS_INDEX_TO_VALUE_MAP[3] = 0.9
-    HINTS_INDEX_TO_VALUE_MAP[4] = 1
-
     def __init__(self):
         QMainWindow.__init__(self)
         self.setupUi(self)
@@ -117,7 +111,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
     def maskContent(self):
         hint_index = self.comboBoxHint.currentIndex()
-        hint_value = Boost.HINTS_INDEX_TO_VALUE_MAP.get(hint_index, 0)
+        hint_value = dialog_boost_constants.HINTS_INDEX_TO_VALUE_MAP.get(hint_index, 0)
 
         self.listWidgetExpressions.clear()
 
@@ -152,7 +146,7 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
     @pyqtSlot()
     def onStartActionTriggered(self):
         hint_index = self.comboBoxHint.currentIndex()
-        hint_value = Boost.HINTS_INDEX_TO_VALUE_MAP.get(hint_index, 0)
+        hint_value = dialog_boost_constants.HINTS_INDEX_TO_VALUE_MAP.get(hint_index, 0)
 
         self.dialogQuiz.hints = hint_value
         self.dialogQuiz.shuffle = self.comboBoxShuffle.currentIndex()
