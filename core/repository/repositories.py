@@ -250,6 +250,7 @@ class Repository:
         shutil.copy(source, destination)
 
         self.storage.path = path
+        self.backup_path = None
 
     def keys(self) -> List[str]:
         return self.storage.keys()
