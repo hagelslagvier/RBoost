@@ -2,7 +2,7 @@ from pathlib import Path
 
 from pytest import fixture
 
-from core.repository.repository import Storage
+from core.repository.repositories import Storage
 
 
 @fixture

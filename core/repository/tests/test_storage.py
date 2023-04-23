@@ -6,7 +6,7 @@ from pytest import raises
 from sqlalchemy import asc
 
 from core.repository.models import Event, Record
-from core.repository.repository import Storage
+from core.repository.repositories import Storage
 
 
 class AggregatedValue(NamedTuple):

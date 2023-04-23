@@ -14,7 +14,7 @@ from PyQt5.QtWidgets import (
     QMessageBox,
 )
 
-from core.repository.repository import Repository
+from core.repository.repositories import Repository
 from core.text import mask_text
 from gui.dialog_boost.Ui_MainWindowBoost import Ui_MainWindowBoost
 from gui.dialog_item_add.DialogItemAdd import DialogItemAdd
