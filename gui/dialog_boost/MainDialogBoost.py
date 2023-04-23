@@ -4,8 +4,15 @@ from typing import Optional
 from PyQt5 import QtCore
 from PyQt5.QtCore import QEvent, QPoint, QSettings, Qt, pyqtSlot
 from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtWidgets import (QAction, QDesktopWidget, QFileDialog,
-                             QListWidgetItem, QMainWindow, QMenu, QMessageBox)
+from PyQt5.QtWidgets import (
+    QAction,
+    QDesktopWidget,
+    QFileDialog,
+    QListWidgetItem,
+    QMainWindow,
+    QMenu,
+    QMessageBox,
+)
 
 from core.repository.repositories import Repository
 from core.text import mask_text
