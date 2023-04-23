@@ -122,10 +122,6 @@ class Storage:
 
     def load(self, path: str) -> None:
         self.path = path
-
-        if not Path(path).exists():
-            raise RuntimeError(f"file '{path}' is not found")
-
         self.url = f"sqlite:///{self.path if self.path == ':memory:' else Path(self.path).resolve()}"
         self.engine = create_engine(url=self.url)
         self.session_factory = sessionmaker(bind=self.engine)
