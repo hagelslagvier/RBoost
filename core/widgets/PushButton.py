@@ -20,8 +20,7 @@ class PushButton(QPushButton):
         self.onMouseReleased.emit()
 
 
-if "__main__" == __name__:
-
+if __name__ == "__main__":
     import sys
 
     from PyQt5.QtWidgets import QApplication
