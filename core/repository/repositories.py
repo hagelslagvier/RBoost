@@ -152,7 +152,7 @@ class Storage:
         session = self.session_factory()
 
         keys = []
-        for record in session.query([Record.id]).order_by(asc(Record.id)):
+        for record in session.query(Record).order_by(asc(Record.id)):
             keys.append(record.key)
 
         session.close()
