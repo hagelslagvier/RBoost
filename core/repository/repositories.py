@@ -248,7 +248,7 @@ class Repository:
 
         if not path:
             return
-        
+
         destination = Path(path).resolve()
         source = Path(self.storage.path).resolve()
 
