@@ -130,20 +130,11 @@ class Storage:
         DeclarativeBase.metadata.create_all(bind=self.engine)
 
     def dump(self, path: str) -> None:
+        if Path(self.path) == Path(path):
+            return
+
         Path(path).unlink(missing_ok=True)
-
-        url = f"sqlite:///{Path(path).resolve()}"
-        engine = create_engine(url=url)
-
-        DeclarativeBase.metadata.create_all(bind=engine)
-
-        new_storage = Storage(path=path)
-        for key, (value, is_checked) in self.items():
-            new_storage[key] = value
-            if is_checked:
-                new_storage.set_checked(key=key)
-            else:
-                new_storage.set_unchecked(key=key)
+        shutil.copy(self.path, path)
 
     def keys(self) -> List[str]:
         session = self.session_factory()
@@ -223,16 +214,7 @@ class Repository:
         if not self.backup_path:
             return
 
-        self.storage.clear()
-
-        backup_storage = Storage(path=self.backup_path)
-        for key, (value, is_checked) in backup_storage.items():
-            self.storage[key] = value
-            if is_checked:
-                self.storage.set_checked(key=key)
-            else:
-                self.storage.set_unchecked(key=key)
-
+        shutil.copy(self.backup_path, self.storage.path)
         Path(self.backup_path).unlink(missing_ok=True)
         self.backup_path = None
 
@@ -241,20 +223,16 @@ class Repository:
         self.backup_path = None
 
     def save(self, path: Optional[str] = None) -> None:
-        if not path and self.backup_path:
+        if not path:
             Path(self.backup_path).unlink(missing_ok=True)
             self.backup_path = None
             return
 
-        if not path:
-            return
-
-        destination = Path(path).resolve()
-        source = Path(self.storage.path).resolve()
-
+        source = str(Path(self.storage.path).resolve())
+        destination = str(Path(path).resolve())
         shutil.copy(source, destination)
 
-        self.storage.path = path
+        self.storage.path = destination
         if self.backup_path:
             Path(self.backup_path).unlink(missing_ok=True)
             self.backup_path = None

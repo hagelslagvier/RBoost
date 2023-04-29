@@ -3,7 +3,7 @@ from typing import Optional
 
 from PyQt5 import QtCore
 from PyQt5.QtCore import QEvent, QPoint, QSettings, Qt, pyqtSlot
-from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtGui import QCloseEvent, QIcon, QPixmap
 from PyQt5.QtWidgets import (
     QAction,
     QDesktopWidget,
@@ -14,6 +14,7 @@ from PyQt5.QtWidgets import (
     QMessageBox,
 )
 
+from core.helpers import make_title_path
 from core.repository.repositories import Repository
 from core.text import mask_text
 from gui.dialog_boost import constants as dialog_boost_constants
@@ -222,7 +223,9 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
         self.listWidgetExpressions.setCurrentItem(QListWidgetItem(key))
 
-        self.setWindowTitle("Boost - {}*".format(self.repository.path))
+        self.setWindowTitle(
+            "Boost - {}*".format(make_title_path(path=self.repository.path))
+        )
 
     @pyqtSlot(str, str)
     def onEditItem(self, new_key: str, new_value: str) -> None:
@@ -237,7 +240,9 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         self.listWidgetExpressions.setCurrentRow(current_row)
         self.textEditMeaning.setText(new_value)
 
-        self.setWindowTitle("Boost - {}*".format(self.repository.path))
+        self.setWindowTitle(
+            "Boost - {}*".format(make_title_path(path=self.repository.path))
+        )
 
     @pyqtSlot()
     def onEditItemClicked(self):
@@ -265,7 +270,9 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
         del self.repository[key]
 
-        self.setWindowTitle("Boost - {}*".format(self.repository.path))
+        self.setWindowTitle(
+            "Boost - {}*".format(make_title_path(path=self.repository.path))
+        )
 
     @pyqtSlot()
     def onActionNewTriggered(self):
@@ -274,7 +281,9 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
             message_box.setIcon(QMessageBox.Question)
             message_box.setWindowTitle("Внимание!")
             message_box.setText(
-                "Файл {} был изменен! Сохранить изменения?".format(self.repository.path)
+                "Файл {} был изменен! Сохранить изменения?".format(
+                    make_title_path(path=self.repository.path)
+                )
             )
 
             ok_button = message_box.addButton("Ok", QMessageBox.ActionRole)
@@ -295,14 +304,18 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
 
         self.listWidgetExpressions.clear()
         self.textEditMeaning.clear()
-        self.setWindowTitle("Boost - {}*".format(self.repository.path))
+        self.setWindowTitle(
+            "Boost - {}*".format(make_title_path(path=self.repository.path))
+        )
 
     @pyqtSlot()
     def onSaveActionTriggered(self):
         self.saveRepository()
         self.saveSettings()
 
-        self.setWindowTitle("Boost - {}".format(self.repository.path))
+        self.setWindowTitle(
+            "Boost - {}".format(make_title_path(path=self.repository.path))
+        )
 
     @pyqtSlot()
     def onSaveAsActionTriggered(self):
@@ -314,10 +327,12 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         if not str(path).endswith(".db"):
             path += ".db"
 
-        self.saveRepository(path=path)
+        self.saveRepository(path=str(path))
         self.saveSettings()
 
-        self.setWindowTitle("Boost - {}".format(self.repository.path))
+        self.setWindowTitle(
+            "Boost - {}".format(make_title_path(path=self.repository.path))
+        )
 
     @pyqtSlot()
     def onActionOpenTriggered(self):
@@ -326,7 +341,9 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
             message_box.setIcon(QMessageBox.Question)
             message_box.setWindowTitle("Внимание!")
             message_box.setText(
-                "Файл {} был изменен! Сохранить изменения?".format(self.repository.path)
+                "Файл {} был изменен! Сохранить изменения?".format(
+                    make_title_path(path=self.repository.path)
+                )
             )
 
             ok_button = message_box.addButton("Ok", QMessageBox.ActionRole)
@@ -340,25 +357,14 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         if path:
             self.loadRepository(path=path)
 
-    def closeEvent(self, event):
-        path = self.repository.path
-        if len(path) > 60:
-            parts = Path(self.repository.path).parts
-            parts_count = len(parts)
-            if parts_count > 2:
-                offset = 2
-            elif parts_count > 3:
-                offset = 3
-            else:
-                offset = 4
-
-            path = ".../" + "/".join(Path(self.repository.path).parts[-offset:])
-
+    def closeEvent(self, event: QCloseEvent):
         if self.repository.backup_path:
             message_box = QMessageBox(parent=self)
             message_box.setIcon(QMessageBox.Question)
             message_box.setWindowTitle("Внимание!")
-            message_box.setText(f"Файл <b>{path}</b> был изменен! Сохранить изменения?")
+            message_box.setText(
+                f"Файл <b>{make_title_path(path=self.repository.path)}</b> был изменен! Сохранить изменения?"
+            )
 
             ok_button = message_box.addButton("Ok", QMessageBox.ActionRole)
             cancel_button = message_box.addButton("Отмена", QMessageBox.ActionRole)
