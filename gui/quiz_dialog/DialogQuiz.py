@@ -57,6 +57,10 @@ class DialogQuiz(Ui_DialogQuiz, QDialog):
             self.pushButton_10,
             self.pushButton_11,
             self.pushButton_12,
+            self.pushButton_13,
+            self.pushButton_14,
+            self.pushButton_15,
+            self.pushButton_16,
         ]
         for button in alphabetButtons:
             button.clicked.connect(self.__onAlphabetButtonClicked)
