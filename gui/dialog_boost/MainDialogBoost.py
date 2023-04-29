@@ -262,6 +262,9 @@ class Boost(QMainWindow, Ui_MainWindowBoost):
         if -1 == current_row:
             return
 
+        if 0 == current_row:
+            self.textEditMeaning.clear()
+
         item = self.listWidgetExpressions.takeItem(current_row)
 
         key = item.text()
