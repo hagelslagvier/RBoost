@@ -12,7 +12,7 @@ class BaseDialogItem(QDialog, Ui_BaseDialogItem):
         QDialog.__init__(self, parent)
         self.setupUi(self)
 
-        self.pushButtonOk.clicked.connect(self.__onPushButtonAddClicked)
+        self.pushButtonOk.clicked.connect(self.__onPushButtonOkClicked)
         self.pushButtonCancel.clicked.connect(self.__onPushButtonCancelClicked)
 
         self.__customize()
@@ -48,7 +48,7 @@ class BaseDialogItem(QDialog, Ui_BaseDialogItem):
         self.__activeInputWidget.setFocus()
 
     @pyqtSlot()
-    def __onPushButtonAddClicked(self):
+    def __onPushButtonOkClicked(self):
         expression = self.textEditExpression.toPlainText()
         expression = str(expression).strip()
         if not expression:
