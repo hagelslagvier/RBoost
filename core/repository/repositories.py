@@ -241,17 +241,23 @@ class Repository:
         self.backup_path = None
 
     def save(self, path: Optional[str] = None) -> None:
-        if not path:
+        if not path and self.backup_path:
+            Path(self.backup_path).unlink(missing_ok=True)
             self.backup_path = None
             return
 
+        if not path:
+            return
+        
         destination = Path(path).resolve()
         source = Path(self.storage.path).resolve()
 
         shutil.copy(source, destination)
 
         self.storage.path = path
-        self.backup_path = None
+        if self.backup_path:
+            Path(self.backup_path).unlink(missing_ok=True)
+            self.backup_path = None
 
     def keys(self) -> List[str]:
         return self.storage.keys()
