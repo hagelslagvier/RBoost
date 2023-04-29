@@ -182,7 +182,7 @@ class Repository:
 
         return value
 
-    def __setitem__(self, key: str, value: str) -> None:
+    def __setitem__(self, key: Union[str, Tuple[str, str]], value: str) -> None:
         if not self.backup_path:
             self.backup()
 
