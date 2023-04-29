@@ -224,7 +224,8 @@ class Repository:
 
     def save(self, path: Optional[str] = None) -> None:
         if not path:
-            Path(self.backup_path).unlink(missing_ok=True)
+            if self.backup_path:
+                Path(self.backup_path).unlink(missing_ok=True)
             self.backup_path = None
             return
 
