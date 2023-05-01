@@ -231,7 +231,8 @@ class Repository:
 
         source = str(Path(self.storage.path).resolve())
         destination = str(Path(path).resolve())
-        shutil.copy(source, destination)
+        if source != destination:
+            shutil.copy(source, destination)
 
         self.storage.path = destination
         if self.backup_path:
